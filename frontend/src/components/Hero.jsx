@@ -16,23 +16,27 @@ export default function Hero({ className = '' }) {
         aria-hidden="true"
       />
 
-      {/* Mobile background artwork — landscape image anchored to the bottom */}
-      <img
-        src="/assets/hero-bg-mobile.png"
-        alt=""
-        className="md:hidden absolute inset-0 w-full h-full object-contain object-bottom"
+      {/* Mobile background artwork — stretched to fully cover the hero */}
+      <div
+        className="md:hidden absolute inset-0 bg-white"
+        style={{
+          backgroundImage: 'url(/assets/hero-bg-mobile.png)',
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
         aria-hidden="true"
       />
 
       {/* Real text content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-start pt-[15%] md:pt-[24vh] px-5 text-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-start pt-[14%] md:pt-[24vh] px-5 text-center">
         <h1 className="text-3xl md:text-6xl lg:text-7xl font-extrabold text-[var(--text-dark)] leading-tight mb-3">
           {t('heroTitle1')}
         </h1>
         <p className="text-2xl md:text-5xl lg:text-6xl font-bold text-[var(--primary)] mb-5">
           {t('heroTitle2')}
         </p>
-        <p className="text-sm md:text-lg text-[var(--text-muted)] max-w-2xl leading-relaxed mb-10 md:mb-16">
+        <p className="text-sm md:text-lg text-[var(--text-muted)] max-w-2xl leading-relaxed mb-20 md:mb-16">
           {t('heroDesc')}
         </p>
 
