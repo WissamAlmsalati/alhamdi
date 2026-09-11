@@ -30,10 +30,10 @@ export default function Hero({ className = '' }) {
 
       {/* Real text content */}
       <div className="absolute inset-0 flex flex-col items-center justify-start pt-[20%] md:pt-[24vh] px-5 text-center">
-        <h1 className="text-3xl md:text-6xl lg:text-7xl font-extrabold text-[var(--text-dark)] leading-tight mb-3">
+        <h1 className="text-3xl md:text-6xl lg:text-7xl font-black text-[var(--text-dark)] leading-tight mb-3">
           {t('heroTitle1')}
         </h1>
-        <p className="text-2xl md:text-5xl lg:text-6xl font-bold text-[var(--primary)] mb-5">
+        <p className="text-2xl md:text-5xl lg:text-6xl font-black text-[var(--primary)] mb-5">
           {t('heroTitle2')}
         </p>
         <p className="text-sm md:text-lg text-[var(--text-muted)] max-w-2xl leading-relaxed mb-20 md:mb-16">
