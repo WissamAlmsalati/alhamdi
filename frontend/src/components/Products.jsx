@@ -253,29 +253,55 @@ export default function Products({ selectedCategory, className = '' }) {
                     )}
 
                     {visibleProducts.length > 1 && (
-                      <div className="flex items-center justify-center gap-3 mt-6">
-                        {visibleProducts.map((product, index) => (
-                          <button
-                            key={product.id}
-                            type="button"
-                            onClick={() => setMobileMainIndex(index)}
-                            className={`w-16 h-16 rounded-2xl border-2 p-1.5 flex items-center justify-center transition-colors ${
-                              index === mobileMainIndex
-                                ? 'border-[#2FAB4B] bg-[#2FAB4B]/5'
-                                : 'border-[#2FAB4B]/30 bg-white'
-                            }`}
-                          >
-                            {product.image ? (
-                              <img
-                                src={product.image}
-                                alt={product.name}
-                                className="w-full h-full object-contain"
-                              />
-                            ) : (
-                              <PlaceholderImage className="w-full h-full" />
-                            )}
-                          </button>
-                        ))}
+                      <div className="flex items-center gap-3 mt-6">
+                        <button
+                          type="button"
+                          onClick={() => setPage((p) => Math.max(1, p - 1))}
+                          disabled={!canGoBack}
+                          className="shrink-0 w-8 h-8 rounded-full border border-gray-200 bg-white text-[#01526D] flex items-center justify-center hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                          aria-label={t('previous')}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isAr ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'} />
+                          </svg>
+                        </button>
+
+                        <div className="flex-1 flex items-center justify-center gap-3 overflow-x-auto scrollbar-hide">
+                          {visibleProducts.map((product, index) => (
+                            <button
+                              key={product.id}
+                              type="button"
+                              onClick={() => setMobileMainIndex(index)}
+                              className={`w-16 h-16 shrink-0 rounded-2xl border-2 p-1.5 flex items-center justify-center transition-colors ${
+                                index === mobileMainIndex
+                                  ? 'border-[#2FAB4B] bg-[#2FAB4B]/5'
+                                  : 'border-[#2FAB4B]/30 bg-white'
+                              }`}
+                            >
+                              {product.image ? (
+                                <img
+                                  src={product.image}
+                                  alt={product.name}
+                                  className="w-full h-full object-contain"
+                                />
+                              ) : (
+                                <PlaceholderImage className="w-full h-full" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                          disabled={!canGoForward}
+                          className="shrink-0 w-8 h-8 rounded-full border border-gray-200 bg-white text-[#01526D] flex items-center justify-center hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                          aria-label={t('next')}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isAr ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'} />
+                          </svg>
+                        </button>
                       </div>
                     )}
                   </>
@@ -289,46 +315,20 @@ export default function Products({ selectedCategory, className = '' }) {
               </div>
             </div>
 
-            {/* Mobile controls */}
+            {/* Mobile dots */}
             {!showAll && totalPages > 1 && (
-              <div className="flex md:hidden items-center justify-center gap-4 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={!canGoBack}
-                  className="w-8 h-8 rounded-full border border-gray-200 bg-white text-[#01526D] flex items-center justify-center hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                  aria-label={t('previous')}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isAr ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'} />
-                  </svg>
-                </button>
-
-                <div className="flex items-center gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => setPage(p)}
-                      className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                        p === page ? 'bg-[#2FAB4B]' : 'bg-gray-300'
-                      }`}
-                      aria-label={`page ${p}`}
-                    />
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={!canGoForward}
-                  className="w-8 h-8 rounded-full border border-gray-200 bg-white text-[#01526D] flex items-center justify-center hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                  aria-label={t('next')}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isAr ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'} />
-                  </svg>
-                </button>
+              <div className="flex md:hidden items-center justify-center gap-2 mt-4">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setPage(p)}
+                    className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                      p === page ? 'bg-[#2FAB4B]' : 'bg-gray-300'
+                    }`}
+                    aria-label={`page ${p}`}
+                  />
+                ))}
               </div>
             )}
 

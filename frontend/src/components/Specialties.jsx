@@ -63,7 +63,7 @@ export default function Specialties({ selectedCategory, onSelectCategory, classN
         ) : specialties.length === 0 ? (
           <p className="text-center text-gray-500">{t('noSpecialties')}</p>
         ) : (
-          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+          <div className="grid grid-cols-2 gap-3 md:flex md:flex-wrap md:items-center md:justify-center md:gap-4">
             {specialties.map((specialty) => {
               const isActive = selectedCategory === specialty.id
               return (
@@ -71,7 +71,7 @@ export default function Specialties({ selectedCategory, onSelectCategory, classN
                   key={specialty.id}
                   type="button"
                   onClick={() => handleSelect(specialty.id)}
-                  className={`flex items-center justify-center gap-2 px-4 md:px-5 py-3 rounded-full border text-sm md:text-base font-medium transition-colors w-auto ${
+                  className={`flex items-center justify-center gap-2 px-4 md:px-5 py-3 rounded-full border text-sm md:text-base font-medium transition-colors w-full md:w-auto ${
                     isActive
                       ? 'bg-[#2FAB4B] border-[#2FAB4B] text-white'
                       : 'border-gray-200 bg-white text-[#01526D] hover:border-[#2FAB4B] hover:text-[#2FAB4B]'
@@ -86,7 +86,7 @@ export default function Specialties({ selectedCategory, onSelectCategory, classN
             <button
               type="button"
               onClick={() => onSelectCategory(null)}
-              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[#2FAB4B] bg-[#e8f5e9] text-[#2FAB4B] text-sm md:text-base font-semibold hover:bg-[#2FAB4B] hover:text-white transition-colors w-auto"
+              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[#2FAB4B] bg-[#e8f5e9] text-[#2FAB4B] text-sm md:text-base font-semibold hover:bg-[#2FAB4B] hover:text-white transition-colors w-full md:w-auto col-span-2 md:col-span-1 justify-self-center"
             >
               <svg
                 className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`}
