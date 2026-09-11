@@ -6,7 +6,7 @@ export default function Hero({ className = '' }) {
   return (
     <section
       id="hero"
-      className={`relative w-full h-[112vw] max-h-[540px] min-h-[440px] md:h-screen md:max-h-none md:min-h-[600px] overflow-hidden bg-white md:bg-[#f4f6f5] ${className}`}
+      className={`relative w-full h-[100vw] max-h-[520px] min-h-[360px] md:h-screen md:max-h-none md:min-h-[600px] overflow-hidden bg-white md:bg-[#f4f6f5] ${className}`}
     >
       {/* Desktop background artwork */}
       <img
