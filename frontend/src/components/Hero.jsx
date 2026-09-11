@@ -29,7 +29,7 @@ export default function Hero({ className = '' }) {
       />
 
       {/* Real text content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-start pt-[14%] md:pt-[24vh] px-5 text-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-start pt-[20%] md:pt-[24vh] px-5 text-center">
         <h1 className="text-3xl md:text-6xl lg:text-7xl font-extrabold text-[var(--text-dark)] leading-tight mb-3">
           {t('heroTitle1')}
         </h1>
