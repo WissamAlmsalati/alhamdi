@@ -145,29 +145,29 @@ function FilterGroup({ title, options, selected, onToggle }) {
 function MobileFilterGroup({ title, options, selected, onToggle }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="border-b border-gray-100">
+    <div className="mb-3">
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-4"
+        className="w-full flex items-center justify-between border border-gray-200 rounded-full px-5 py-4 bg-white"
       >
-        <span className="flex items-center gap-2 text-sm font-semibold text-[#01526D]">
-          <svg className="w-4 h-4 text-[#2FAB4B]" fill="currentColor" viewBox="0 0 24 24">
+        <span className="flex items-center gap-2 text-base font-semibold text-[#01526D]">
+          <svg className="w-5 h-5 text-[#2FAB4B]" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z" />
           </svg>
           {title}
         </span>
         <svg
-          className={`w-5 h-5 text-gray-500 transition-transform ${open ? 'rotate-180' : ''}`}
+          className={`w-5 h-5 text-[#01526D] transition-transform ${open ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       {open && (
-        <div className="pb-4 space-y-2.5">
+        <div className="px-5 pt-4 pb-2 space-y-3">
           {options.map((option) => {
             const checked = selected.includes(String(option.id))
             return (
@@ -340,7 +340,7 @@ export default function ProductsPage() {
                     setPage(1)
                   }}
                   placeholder={t('searchProducts')}
-                  className="w-full px-5 py-3 mb-2 rounded-full border border-gray-200 focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none text-sm text-center"
+                  className="w-full px-6 py-4 mb-4 rounded-full border border-gray-200 focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none text-base text-center"
                 />
                 <MobileFilterGroup
                   title={t('filterBySpecialty')}

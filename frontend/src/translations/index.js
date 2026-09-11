@@ -59,10 +59,10 @@ const translations = {
 
     // Products Page
     productsSubtitle: 'استكشف مجموعتنا المتكاملة من التجهيزات والمعدات الطبية',
-    searchProducts: 'ابحث عن المنتجات...',
+    searchProducts: 'ابحث عن الجهاز الذي تريده',
     filters: 'فلترة النتائج',
-    filterBySpecialty: 'فلترة حسب التخصص',
-    filterByBrand: 'فلترة حسب العلامة التجارية',
+    filterBySpecialty: 'فلترة التخصصات',
+    filterByBrand: 'فلترة البراندات',
     allCategories: 'كل التخصصات',
     allBrands: 'كل العلامات',
     showingResults: 'عرض {{from}}-{{to}} من {{total}} نتيجة',
@@ -192,7 +192,7 @@ const translations = {
 
     // Products Page
     productsSubtitle: 'Explore our comprehensive range of medical equipment and supplies',
-    searchProducts: 'Search products...',
+    searchProducts: 'Search for the device you want',
     filters: 'Filters',
     filterBySpecialty: 'Filter by Specialty',
     filterByBrand: 'Filter by Brand',
