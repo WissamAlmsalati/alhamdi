@@ -26,8 +26,9 @@ services:
       dockerfile: Dockerfile
     container_name: wahat-backend
     # Exposed only on localhost so host nginx can proxy the admin subdomain
+    # (override the host port with WAHAT_BACKEND_PORT if 8000 is taken locally)
     ports:
-      - "127.0.0.1:8000:80"
+      - "${WAHAT_BACKEND_PORT:-127.0.0.1:8000}:80"
     volumes:
       - ./backend/storage/app/public:/var/www/html/storage/app/public
     environment:
