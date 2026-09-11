@@ -40,10 +40,10 @@ fi
 # Create storage link
 php artisan storage:link
 
-# Clear and cache config
+# Clear and cache config; compile views on demand so code updates always show
 php artisan config:cache
 php artisan route:cache
-php artisan view:cache
+php artisan view:clear
 
 # Start Apache
 exec apache2-foreground
