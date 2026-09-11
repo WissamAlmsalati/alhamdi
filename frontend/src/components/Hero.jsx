@@ -6,7 +6,7 @@ export default function Hero({ className = '' }) {
   return (
     <section
       id="hero"
-      className={`relative w-full h-screen min-h-[600px] overflow-hidden bg-[#f4f6f5] ${className}`}
+      className={`relative w-full h-[112vw] max-h-[540px] min-h-[440px] md:h-screen md:max-h-none md:min-h-[600px] overflow-hidden bg-white md:bg-[#f4f6f5] ${className}`}
     >
       {/* Desktop background artwork */}
       <img
@@ -16,16 +16,16 @@ export default function Hero({ className = '' }) {
         aria-hidden="true"
       />
 
-      {/* Mobile background artwork */}
+      {/* Mobile background artwork — landscape image anchored to the bottom */}
       <img
         src="/assets/hero-bg-mobile.png"
         alt=""
-        className="md:hidden absolute inset-0 w-full h-full object-cover object-center"
+        className="md:hidden absolute inset-0 w-full h-full object-contain object-bottom"
         aria-hidden="true"
       />
 
       {/* Real text content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-start pt-[18vh] md:pt-[24vh] px-5 text-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-start pt-[15%] md:pt-[24vh] px-5 text-center">
         <h1 className="text-3xl md:text-6xl lg:text-7xl font-extrabold text-[var(--text-dark)] leading-tight mb-3">
           {t('heroTitle1')}
         </h1>
