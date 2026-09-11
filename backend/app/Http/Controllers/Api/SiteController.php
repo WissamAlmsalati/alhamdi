@@ -88,6 +88,7 @@ class SiteController extends Controller
                 ? $this->localizedName($product->brand, $locale)
                 : null,
             'image' => $product->image ? '/storage/'.$product->image : null,
+            'catalog' => $product->catalog ? '/storage/'.$product->catalog : null,
         ];
     }
 

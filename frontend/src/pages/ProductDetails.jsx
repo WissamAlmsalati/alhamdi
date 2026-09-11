@@ -180,15 +180,27 @@ export default function ProductDetails() {
                     {t('requestPrice')}
                   </button>
 
-                  <Link
-                    to="/products"
-                    className="flex-1 inline-flex items-center justify-center gap-2 border border-gray-200 text-[#01526D] font-semibold px-6 py-3.5 rounded-full hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    {t('moreProducts')}
-                  </Link>
+                  {product.catalog ? (
+                    <a
+                      href={product.catalog}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="flex-1 inline-flex items-center justify-center gap-2 border border-gray-200 text-[#01526D] font-semibold px-6 py-3.5 rounded-full hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m4 4V4" />
+                      </svg>
+                      {t('downloadCatalog')}
+                    </a>
+                  ) : (
+                    <Link
+                      to="/products"
+                      className="flex-1 inline-flex items-center justify-center gap-2 border border-gray-200 text-[#01526D] font-semibold px-6 py-3.5 rounded-full hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors"
+                    >
+                      {t('moreProducts')}
+                    </Link>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#01526D] font-medium justify-start">

@@ -58,6 +58,7 @@ const translations = {
     originalProduct: 'منتج أصلي 100%',
     certifiedWarranty: 'ضمان معتمد 5 سنوات',
     similarProducts: 'منتجات مشابهة',
+    downloadCatalog: 'تحميل الكتالوج',
 
     // Product Card
     productFallbackDesc: 'أداء موثوق وسهل الاستخدام مع أعلى معايير الأمان',
@@ -196,6 +197,7 @@ const translations = {
     originalProduct: '100% Genuine Product',
     certifiedWarranty: '5 Years Certified Warranty',
     similarProducts: 'Similar Products',
+    downloadCatalog: 'Download Catalog',
 
     // Product Card
     productFallbackDesc: 'Reliable, easy-to-use performance with the highest safety standards',

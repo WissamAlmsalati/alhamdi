@@ -36,6 +36,7 @@ class ProductController extends Controller
             'brand_id' => 'nullable|exists:brands,id',
             'price' => 'nullable|numeric|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'catalog' => 'nullable|file|mimes:pdf|max:10240',
             'is_active' => 'boolean',
         ]);
 
@@ -44,6 +45,10 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        if ($request->hasFile('catalog')) {
+            $data['catalog'] = $request->file('catalog')->store('catalogs', 'public');
         }
 
         Product::create($data);
@@ -69,6 +74,7 @@ class ProductController extends Controller
             'brand_id' => 'nullable|exists:brands,id',
             'price' => 'nullable|numeric|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'catalog' => 'nullable|file|mimes:pdf|max:10240',
             'is_active' => 'boolean',
         ]);
 
@@ -82,6 +88,13 @@ class ProductController extends Controller
             $data['image'] = $request->file('image')->store('products', 'public');
         }
 
+        if ($request->hasFile('catalog')) {
+            if ($product->catalog) {
+                Storage::disk('public')->delete($product->catalog);
+            }
+            $data['catalog'] = $request->file('catalog')->store('catalogs', 'public');
+        }
+
         $product->update($data);
 
         return redirect()->route('admin.products.index')->with('success', 'تم تعديل المنتج');
@@ -91,6 +104,9 @@ class ProductController extends Controller
     {
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
+        }
+        if ($product->catalog) {
+            Storage::disk('public')->delete($product->catalog);
         }
         $product->delete();
         return redirect()->route('admin.products.index')->with('success', 'تم حذف المنتج');

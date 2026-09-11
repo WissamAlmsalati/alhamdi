@@ -21,6 +21,16 @@
         </div>
 
         <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">ملف الكتالوج (PDF)</label>
+            @if ($product->catalog)
+                <p class="text-sm mb-2"><a href="{{ '/storage/' . $product->catalog }}" target="_blank" class="text-[#2FAB4B] hover:underline">الكتالوج الحالي</a></p>
+            @endif
+            <input type="file" name="catalog" accept="application/pdf,.pdf"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
+            @error('catalog')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+        </div>
+
+        <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-1">الاسم (عربي) *</label>
             <input type="text" name="name" value="{{ old('name', $product->name) }}" required
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
