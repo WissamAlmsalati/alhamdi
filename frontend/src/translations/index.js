@@ -53,6 +53,11 @@ const translations = {
     backToHome: 'العودة للرئيسية',
     wahatAlteeb: 'واحة الطيب',
     currency: 'د.ل',
+    productDetails: 'تفاصيل المنتج',
+    available: 'متوفّر',
+    originalProduct: 'منتج أصلي 100%',
+    certifiedWarranty: 'ضمان معتمد 5 سنوات',
+    similarProducts: 'منتجات مشابهة',
 
     // Product Card
     productFallbackDesc: 'أداء موثوق وسهل الاستخدام مع أعلى معايير الأمان',
@@ -186,6 +191,11 @@ const translations = {
     backToHome: 'Back to Home',
     wahatAlteeb: 'Wahat Alteeb',
     currency: 'LYD',
+    productDetails: 'Product Details',
+    available: 'Available',
+    originalProduct: '100% Genuine Product',
+    certifiedWarranty: '5 Years Certified Warranty',
+    similarProducts: 'Similar Products',
 
     // Product Card
     productFallbackDesc: 'Reliable, easy-to-use performance with the highest safety standards',
