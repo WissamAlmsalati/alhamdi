@@ -18,6 +18,14 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache rewrite
 RUN a2enmod rewrite
 
+# Raise upload limits (PHP defaults are 2M/8M — too small for product photos and catalogs)
+RUN { \
+        echo 'upload_max_filesize=50M'; \
+        echo 'post_max_size=60M'; \
+        echo 'memory_limit=512M'; \
+        echo 'max_execution_time=120'; \
+    } > "$PHP_INI_DIR/conf.d/zz-uploads.ini"
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

@@ -28,7 +28,7 @@ class BrandController extends Controller
             'name_en' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:5000',
             'description_en' => 'nullable|string|max:5000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:10240',
             'is_active' => 'boolean',
         ]);
 
@@ -56,7 +56,7 @@ class BrandController extends Controller
             'name_en' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:5000',
             'description_en' => 'nullable|string|max:5000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:10240',
             'is_active' => 'boolean',
         ]);
 
