@@ -22,39 +22,39 @@ function ProductCard({ product, onRequestPrice, isAr }) {
   const { t } = useLanguage()
 
   return (
-    <div className="bg-white rounded-2xl md:rounded-3xl border border-gray-100 p-4 md:p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
-      <div className="rounded-xl md:rounded-2xl bg-gray-50 overflow-hidden mb-4">
+    <div className="bg-white rounded-2xl md:rounded-3xl border border-gray-100 p-3 md:p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
+      <div className="rounded-xl md:rounded-2xl bg-gray-50 overflow-hidden mb-3 md:mb-4">
         {product.image ? (
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-44 md:h-52 object-contain"
+            className="w-full h-32 md:h-52 object-contain"
           />
         ) : (
-          <PlaceholderImage className="w-full h-44 md:h-52" />
+          <PlaceholderImage className="w-full h-32 md:h-52" />
         )}
       </div>
 
       <div className={`flex-1 flex flex-col ${isAr ? 'text-right' : 'text-left'}`}>
         {product.brand && (
-          <p className="text-sm font-semibold text-[#2FAB4B] mb-1">{product.brand}</p>
+          <p className="text-xs md:text-sm font-semibold text-[#2FAB4B] mb-1">{product.brand}</p>
         )}
-        <h3 className="text-lg md:text-xl font-bold text-[#01526D] mb-2">{product.name}</h3>
-        <p className="text-sm text-[var(--text-muted)] leading-relaxed mb-4 flex-1 line-clamp-3">
+        <h3 className="text-base md:text-xl font-bold text-[#01526D] mb-2">{product.name}</h3>
+        <p className="text-xs md:text-sm text-[var(--text-muted)] leading-relaxed mb-4 flex-1 line-clamp-2 md:line-clamp-3">
           {product.description || t('productFallbackDesc')}
         </p>
 
         <button
           type="button"
           onClick={() => onRequestPrice(product)}
-          className="w-full bg-[#2FAB4B] hover:bg-[#237a4a] text-white font-semibold py-2.5 rounded-full transition-colors mb-3"
+          className="w-full bg-[#2FAB4B] hover:bg-[#237a4a] text-white text-sm font-semibold py-2.5 rounded-full transition-colors mb-3"
         >
           {t('requestPrice')}
         </button>
 
         <Link
           to={`/products/${product.id}`}
-          className="w-full flex items-center justify-center gap-2 border border-gray-200 text-[#01526D] font-medium py-2 rounded-full hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors"
+          className="w-full flex items-center justify-center gap-2 border border-gray-200 text-[#01526D] text-sm font-medium py-2 rounded-full hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -142,6 +142,55 @@ function FilterGroup({ title, options, selected, onToggle }) {
   )
 }
 
+function MobileFilterGroup({ title, options, selected, onToggle }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="border-b border-gray-100">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between py-4"
+      >
+        <span className="flex items-center gap-2 text-sm font-semibold text-[#01526D]">
+          <svg className="w-4 h-4 text-[#2FAB4B]" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z" />
+          </svg>
+          {title}
+        </span>
+        <svg
+          className={`w-5 h-5 text-gray-500 transition-transform ${open ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="pb-4 space-y-2.5">
+          {options.map((option) => {
+            const checked = selected.includes(String(option.id))
+            return (
+              <label
+                key={option.id}
+                className="flex items-center gap-2 cursor-pointer text-sm text-gray-700"
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => onToggle(String(option.id))}
+                  className="w-4 h-4 rounded border-gray-300 text-[#2FAB4B] focus:ring-[#2FAB4B]"
+                />
+                <span>{option.name}</span>
+              </label>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function ProductsPage() {
   const { t, language } = useLanguage()
   const isAr = language === 'ar'
@@ -152,7 +201,6 @@ export default function ProductsPage() {
   const [productsData, setProductsData] = useState({ data: [], current_page: 1, last_page: 1, total: 0, from: 0, to: 0 })
   const [loading, setLoading] = useState(true)
   const [orderProduct, setOrderProduct] = useState(null)
-  const [filtersOpen, setFiltersOpen] = useState(false)
 
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [selectedCategories, setSelectedCategories] = useState(searchParams.getAll('categories[]'))
@@ -249,14 +297,14 @@ export default function ProductsPage() {
       <main className="flex-1 pt-24 md:pt-28 pb-16 md:pb-20 px-5 lg:px-10">
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumb */}
-          <nav className={`text-sm text-gray-500 mb-4 ${isAr ? 'text-right' : 'text-left'}`} aria-label="Breadcrumb">
+          <nav className={`text-sm text-gray-500 mb-4 text-center ${isAr ? 'lg:text-right' : 'lg:text-left'}`} aria-label="Breadcrumb">
             <Link to="/" className="hover:text-[#2FAB4B] transition-colors">{t('home')}</Link>
             <span className="mx-2">/</span>
             <span className="text-[#01526D] font-medium">{t('products')}</span>
           </nav>
 
           {/* Header */}
-          <div className={`mb-10 md:mb-12 ${isAr ? 'text-right' : 'text-left'}`}>
+          <div className={`mb-10 md:mb-12 text-center ${isAr ? 'lg:text-right' : 'lg:text-left'}`}>
             <h1 className="text-3xl md:text-4xl font-bold text-[#01526D] mb-3">{t('products')}</h1>
             <p className="text-gray-600">{t('productsSubtitle')}</p>
           </div>
@@ -282,62 +330,40 @@ export default function ProductsPage() {
 
             {/* Products grid */}
             <section className={`order-last lg:col-span-3 ${isAr ? 'lg:order-2' : 'lg:order-1'}`}>
-              {/* Mobile filter toggle */}
-              <div className="lg:hidden mb-5">
-                <button
-                  type="button"
-                  onClick={() => setFiltersOpen(true)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-gray-200 text-[#01526D] font-medium px-5 py-2.5 rounded-xl hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                  </svg>
-                  {t('filters')}
-                </button>
-              </div>
-
-              {/* Mobile filter drawer */}
-              {filtersOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-                    onClick={() => setFiltersOpen(false)}
-                  />
-                  <div
-                    className={`fixed top-0 bottom-0 w-[min(20rem,85vw)] max-w-full bg-gray-50 z-50 p-5 shadow-xl lg:hidden ${isAr ? 'right-0' : 'left-0'}`}
+              {/* Mobile filters — search pill + accordion groups */}
+              <div className="lg:hidden mb-6">
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value)
+                    setPage(1)
+                  }}
+                  placeholder={t('searchProducts')}
+                  className="w-full px-5 py-3 mb-2 rounded-full border border-gray-200 focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none text-sm text-center"
+                />
+                <MobileFilterGroup
+                  title={t('filterBySpecialty')}
+                  options={categories}
+                  selected={selectedCategories}
+                  onToggle={toggleCategory}
+                />
+                <MobileFilterGroup
+                  title={t('filterByBrand')}
+                  options={brands}
+                  selected={selectedBrands}
+                  onToggle={toggleBrand}
+                />
+                {hasFilters && (
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="mt-3 text-sm text-[#2FAB4B] hover:underline"
                   >
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-[#01526D]">{t('filters')}</h3>
-                      <button
-                        type="button"
-                        onClick={() => setFiltersOpen(false)}
-                        className="p-2 text-gray-500 hover:text-[#01526D]"
-                        aria-label={t('close')}
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="h-[calc(100%-3rem)]">
-                      <FiltersContent
-                        categories={categories}
-                        brands={brands}
-                        search={search}
-                        setSearch={setSearch}
-                        setPage={setPage}
-                        selectedCategories={selectedCategories}
-                        selectedBrands={selectedBrands}
-                        toggleCategory={toggleCategory}
-                        toggleBrand={toggleBrand}
-                        hasFilters={hasFilters}
-                        clearFilters={clearFilters}
-                        t={t}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
+                    {t('clearFilters')}
+                  </button>
+                )}
+              </div>
 
               {loading ? (
                 <p className="text-center text-gray-500 py-12">{t('loading')}</p>
@@ -360,7 +386,7 @@ export default function ProductsPage() {
                     {resultText}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
+                  <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6">
                     {productsData.data.map((product) => (
                       <ProductCard
                         key={product.id}
