@@ -162,10 +162,6 @@ export default function Products({ selectedCategory, className = '' }) {
     }
   }, [selectedCategory])
 
-  useEffect(() => {
-    setMobileMainIndex(0)
-  }, [page])
-
   const filteredProducts = selectedCategory
     ? products.filter((p) => p.category_id === selectedCategory)
     : products
@@ -174,6 +170,33 @@ export default function Products({ selectedCategory, className = '' }) {
   const visibleProducts = showAll
     ? filteredProducts
     : filteredProducts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+
+  const goToPage = (p) => {
+    setPage(p)
+    setMobileMainIndex(0)
+  }
+
+  // Mobile arrows step through products one by one, crossing page boundaries
+  const mobilePrev = () => {
+    if (mobileMainIndex > 0) {
+      setMobileMainIndex(mobileMainIndex - 1)
+    } else if (page > 1) {
+      setPage(page - 1)
+      setMobileMainIndex(ITEMS_PER_PAGE - 1)
+    }
+  }
+
+  const mobileNext = () => {
+    if (mobileMainIndex < visibleProducts.length - 1) {
+      setMobileMainIndex(mobileMainIndex + 1)
+    } else if (page < totalPages) {
+      setPage(page + 1)
+      setMobileMainIndex(0)
+    }
+  }
+
+  const mobileCanGoBack = page > 1 || mobileMainIndex > 0
+  const mobileCanGoForward = page < totalPages || mobileMainIndex < visibleProducts.length - 1
 
   const canGoBack = page > 1
   const canGoForward = page < totalPages
@@ -256,8 +279,8 @@ export default function Products({ selectedCategory, className = '' }) {
                       <div className="flex items-center gap-3 mt-6">
                         <button
                           type="button"
-                          onClick={() => setPage((p) => Math.max(1, p - 1))}
-                          disabled={!canGoBack}
+                          onClick={mobilePrev}
+                          disabled={!mobileCanGoBack}
                           className="shrink-0 w-8 h-8 rounded-full border border-gray-200 bg-white text-[#01526D] flex items-center justify-center hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                           aria-label={t('previous')}
                         >
@@ -293,8 +316,8 @@ export default function Products({ selectedCategory, className = '' }) {
 
                         <button
                           type="button"
-                          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                          disabled={!canGoForward}
+                          onClick={mobileNext}
+                          disabled={!mobileCanGoForward}
                           className="shrink-0 w-8 h-8 rounded-full border border-gray-200 bg-white text-[#01526D] flex items-center justify-center hover:border-[#2FAB4B] hover:text-[#2FAB4B] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                           aria-label={t('next')}
                         >
@@ -322,7 +345,7 @@ export default function Products({ selectedCategory, className = '' }) {
                   <button
                     key={p}
                     type="button"
-                    onClick={() => setPage(p)}
+                    onClick={() => goToPage(p)}
                     className={`w-2.5 h-2.5 rounded-full transition-colors ${
                       p === page ? 'bg-[#2FAB4B]' : 'bg-gray-300'
                     }`}
@@ -339,7 +362,7 @@ export default function Products({ selectedCategory, className = '' }) {
                   <button
                     key={p}
                     type="button"
-                    onClick={() => setPage(p)}
+                    onClick={() => goToPage(p)}
                     className={`w-2.5 h-2.5 rounded-full transition-colors ${
                       p === page ? 'bg-[#2FAB4B]' : 'bg-gray-300'
                     }`}
