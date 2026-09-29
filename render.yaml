@@ -49,11 +49,9 @@ services:
         sync: false          # you enter it once when creating the Blueprint
       - key: ADMIN_PASSWORD
         generateValue: true  # copy it from the service's Environment tab
-      - key: FRONTEND_HOST
-        fromService:
-          type: web
-          name: mix-site
-          property: host
+      # The website's public address, used by the admin panel's "view site" link.
+      - key: FRONTEND_URL
+        sync: false
 
   - type: web
     name: mix-site
@@ -62,11 +60,10 @@ services:
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
     envVars:
-      - key: VITE_API_HOST
-        fromService:
-          type: web
-          name: mix-backend
-          property: host
+      # The backend's PUBLIC address + /api, e.g. https://mix-backend-xxxx.onrender.com/api
+      # (Render's fromService "host" is the internal hostname, which a browser can't reach.)
+      - key: VITE_API_URL
+        sync: false
     routes:
       - type: rewrite
         source: /*
