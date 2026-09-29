@@ -13,3 +13,4 @@ storage/framework/views/*
 storage/logs/*
 storage/app/public/*
 bootstrap/cache/*.php
+public/storage

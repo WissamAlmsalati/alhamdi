@@ -50,8 +50,19 @@ if [ "$CATEGORY_COUNT" = "0" ]; then
     php artisan db:seed --force
 fi
 
-# Create storage link
+# Create storage link. Remove any stale link first (e.g. one copied from a developer machine).
+rm -f /var/www/html/public/storage
 php artisan storage:link
+
+# Restore the bundled catalog photos when they're missing. Hosts without a persistent disk
+# (e.g. Render's free plan) wipe uploaded files on every restart, but the database keeps the paths.
+mkdir -p /var/www/html/storage/app/public/products
+for photo in /var/www/html/database/seeders/images/*; do
+    [ -f "$photo" ] || continue
+    target="/var/www/html/storage/app/public/products/$(basename "$photo")"
+    [ -f "$target" ] || cp "$photo" "$target"
+done
+chown -R www-data:www-data /var/www/html/storage/app/public
 
 # Clear and cache config; compile views on demand so code updates always show
 php artisan config:cache
