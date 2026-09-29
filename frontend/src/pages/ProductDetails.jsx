@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { assetUrl, useApi } from '../lib/api.js'
-import { whatsappLink } from '../config/site.js'
 import PageHeader from '../components/PageHeader.jsx'
 import ProductCard, { CardSkeleton } from '../components/ProductCard.jsx'
 import ProductImage from '../components/ProductImage.jsx'
@@ -83,9 +82,6 @@ export default function ProductDetails() {
               <button type="button" className="btn orange wide" onClick={() => openInquiry(product)}>
                 <span>{t('askAboutThis')}</span><span className="arrow">→</span>
               </button>
-              <a className="btn fill" href={whatsappLink(`${t('inquiryAbout')}: ${product.name}`)} target="_blank" rel="noopener noreferrer">
-                <Icon name="whatsapp" style={{ width: 18, height: 18 }} /><span>{t('whatsapp')}</span>
-              </a>
               {catalog && (
                 <a className="btn" href={catalog} target="_blank" rel="noopener noreferrer" download>
                   <Icon name="file" style={{ width: 18, height: 18 }} /><span>{t('downloadCatalog')}</span>
