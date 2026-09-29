@@ -29,8 +29,13 @@ export default function ProductDetails() {
   }
 
   const [active, setActive] = useState(0)
-  useEffect(() => setActive(0), [id])
-  const gallery = product?.images?.length ? product.images : product?.image ? [product.image] : []
+  const [failed, setFailed] = useState(() => new Set())
+  useEffect(() => { setActive(0); setFailed(new Set()) }, [id])
+  // Images that fail to load (e.g. files lost on a host without a persistent disk) are dropped;
+  // with none left, the drawn product art is shown instead of a broken image.
+  const allImages = product?.images?.length ? product.images : product?.image ? [product.image] : []
+  const gallery = allImages.filter((src) => !failed.has(src))
+  const markFailed = (src) => setFailed((f) => new Set(f).add(src))
 
   const similarItems = (similar.data?.data || []).filter((p) => String(p.id) !== String(id)).slice(0, 4)
   const catalog = assetUrl(product?.catalog)
@@ -54,7 +59,7 @@ export default function ProductDetails() {
           <div className="gal">
             <div className="main">
               {gallery.length > 0
-                ? <img src={assetUrl(gallery[Math.min(active, gallery.length - 1)])} alt={product.name} />
+                ? <img src={assetUrl(gallery[Math.min(active, gallery.length - 1)])} alt={product.name} onError={() => markFailed(gallery[Math.min(active, gallery.length - 1)])} />
                 : <ProductImage product={product} />}
             </div>
             {gallery.length > 1 && (
@@ -62,7 +67,7 @@ export default function ProductDetails() {
                 {gallery.map((src, i) => (
                   <button key={src + i} type="button" className={i === active ? 'on' : ''} aria-pressed={i === active}
                     aria-label={t('imageN', { n: i + 1 })} onClick={() => setActive(i)}>
-                    <img src={assetUrl(src)} alt="" loading="lazy" />
+                    <img src={assetUrl(src)} alt="" loading="lazy" onError={() => markFailed(src)} />
                   </button>
                 ))}
               </div>
