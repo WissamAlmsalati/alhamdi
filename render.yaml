@@ -7,7 +7,7 @@ databases:
   - name: mix-db
     databaseName: mix
     user: mix
-    plan: basic-256mb
+    plan: free               # free Postgres expires after 30 days — for testing only
 
 services:
   - type: web
@@ -15,12 +15,13 @@ services:
     runtime: docker
     rootDir: backend
     dockerfilePath: ./Dockerfile
-    plan: starter            # a disk (for uploaded photos and files) needs a paid plan
+    plan: free               # testing only: sleeps when idle, and uploaded files are lost on each deploy/restart
     healthCheckPath: /up
-    disk:
-      name: uploads
-      mountPath: /var/www/html/storage/app/public
-      sizeGB: 1
+    # For production switch to plan: starter and add a disk so uploads persist:
+    # disk:
+    #   name: uploads
+    #   mountPath: /var/www/html/storage/app/public
+    #   sizeGB: 1
     envVars:
       - key: APP_ENV
         value: production
