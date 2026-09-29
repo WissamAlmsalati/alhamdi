@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="page-head">
-    <div><h1>{{ __('إضافة منتج') }}</h1><p>{{ __('املأ البيانات بالعربي، والإنجليزي اختياري.') }}</p></div>
+    <div><h1>{{ __('إضافة منتج') }}</h1><p>{{ __('املأ البيانات بالعربي والإنجليزي.') }}</p></div>
 </div>
 
 <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">

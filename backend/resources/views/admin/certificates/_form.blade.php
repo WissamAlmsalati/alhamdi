@@ -1,13 +1,10 @@
 {{-- Shared certificate form. Expects $certificate --}}
 <div class="form-layout">
     <div style="display:grid;gap:18px">
-        <section class="card" data-lang-tabs>
+        <section class="card" data-bilingual>
             <div class="card-body">
-                <div class="lang-tabs" role="tablist">
-                    <button type="button" class="on" data-pane="ar">{{ __('العربية') }}</button>
-                    <button type="button" data-pane="en">English</button>
-                </div>
                 <div class="lang-pane fields" data-pane="ar">
+                    <span class="pane-label">العربية</span>
                     <div class="field @error('title') has-error @enderror">
                         <label for="title">{{ __('اسم الملف') }} <em>*</em></label>
                         <input class="input" id="title" name="title" value="{{ old('title', $certificate->title) }}" required placeholder="{{ __('مثال: السجل التجاري') }}">
@@ -19,10 +16,11 @@
                         @error('issuer')<span class="error">{{ $message }}</span>@enderror
                     </div>
                 </div>
-                <div class="lang-pane fields" data-pane="en" hidden>
+                <div class="lang-pane fields" data-pane="en" lang="en" dir="ltr">
+                    <span class="pane-label">English</span>
                     <div class="field @error('title_en') has-error @enderror">
-                        <label for="title_en">Title</label>
-                        <input class="input" id="title_en" name="title_en" value="{{ old('title_en', $certificate->title_en) }}" dir="ltr" placeholder="e.g. Commercial Register">
+                        <label for="title_en">Title <em>*</em></label>
+                        <input class="input" id="title_en" name="title_en" value="{{ old('title_en', $certificate->title_en) }}" dir="ltr" placeholder="e.g. Commercial Register" required>
                         @error('title_en')<span class="error">{{ $message }}</span>@enderror
                     </div>
                     <div class="field @error('issuer_en') has-error @enderror">

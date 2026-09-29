@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -25,7 +26,7 @@ class BrandController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'name_en' => 'nullable|string|max:255',
+            'name_en' => 'required|string|max:255',
             'description' => 'nullable|string|max:5000',
             'description_en' => 'nullable|string|max:5000',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:10240',
@@ -36,7 +37,7 @@ class BrandController extends Controller
         $data['is_active'] = $request->boolean('is_active', true);
 
         if ($request->hasFile('image')) {
-            $data['logo'] = $request->file('image')->store('brands', 'public');
+            $data['logo'] = ImageOptimizer::store($request->file('image'), 'brands');
         }
 
         Brand::create($data);
@@ -53,7 +54,7 @@ class BrandController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'name_en' => 'nullable|string|max:255',
+            'name_en' => 'required|string|max:255',
             'description' => 'nullable|string|max:5000',
             'description_en' => 'nullable|string|max:5000',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:10240',
@@ -67,7 +68,7 @@ class BrandController extends Controller
             if ($brand->logo) {
                 Storage::disk('public')->delete($brand->logo);
             }
-            $data['logo'] = $request->file('image')->store('brands', 'public');
+            $data['logo'] = ImageOptimizer::store($request->file('image'), 'brands');
         }
 
         $brand->update($data);

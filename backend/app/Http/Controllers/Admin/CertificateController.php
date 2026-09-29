@@ -69,7 +69,7 @@ class CertificateController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'title_en' => 'nullable|string|max:255',
+            'title_en' => 'required|string|max:255',
             'issuer' => 'nullable|string|max:255',
             'issuer_en' => 'nullable|string|max:255',
             'number' => 'nullable|string|max:120',

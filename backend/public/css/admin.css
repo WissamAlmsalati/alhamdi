@@ -408,3 +408,31 @@ table.table { width: 100%; border-collapse: collapse; min-width: 720px; }
 .gallery-item:hover span, .gallery-item:has(input:checked) span { opacity: 1; }
 .gallery-item:has(input:checked) { border-color: var(--red); }
 .gallery-item:has(input:checked) img { opacity: .35; }
+
+/* ---------- Loading feedback ---------- */
+.page-loading { position: fixed; top: 0; inset-inline: 0; height: 3px; z-index: 200; pointer-events: none; opacity: 0; transition: opacity .2s; background: linear-gradient(90deg, transparent, var(--orange), transparent); background-size: 50% 100%; background-repeat: no-repeat; }
+.page-loading.on { opacity: 1; animation: page-loading 1s linear infinite; }
+@keyframes page-loading { from { background-position: -50% 0; } to { background-position: 150% 0; } }
+.is-loading { pointer-events: none; opacity: .85; cursor: progress; }
+.spin { width: 16px; height: 16px; flex: none; border-radius: 50%; border: 2px solid currentColor; border-inline-end-color: transparent; animation: spin .7s linear infinite; display: inline-block; }
+.icon-btn.is-loading svg { display: none; }
+.btn.is-loading svg { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation-duration: 1.6s; } .page-loading.on { animation: none; background: var(--orange); } }
+
+/* Bilingual forms: Arabic and English side by side */
+[data-bilingual] > .card-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; padding: 0; }
+[data-bilingual] .lang-pane { padding: 20px; align-content: start; }
+[data-bilingual] .lang-pane[data-pane="ar"] { border-inline-end: 1.5px solid var(--line); }
+[data-bilingual] .lang-pane[hidden] { display: grid !important; }
+.pane-label { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; color: var(--orange); text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; }
+.pane-label::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); }
+[data-bilingual] .lang-pane[data-pane="en"] .hint, [data-bilingual] .lang-pane[data-pane="en"] .error { direction: rtl; text-align: left; }
+[dir="ltr"] [data-bilingual] .lang-pane[data-pane="en"] .hint, [dir="ltr"] [data-bilingual] .lang-pane[data-pane="en"] .error { direction: ltr; }
+@media (max-width: 800px) {
+    [data-bilingual] > .card-body { grid-template-columns: 1fr; }
+    [data-bilingual] .lang-pane[data-pane="ar"] { border-inline-end: 0; border-bottom: 1.5px solid var(--line); }
+}
+
+/* The side column can be taller than the screen (image, gallery, catalog): let it scroll with the page. */
+.form-layout .side { position: static; }

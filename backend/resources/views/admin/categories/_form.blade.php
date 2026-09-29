@@ -1,12 +1,9 @@
 {{-- Shared form. Expects $category --}}
 <div class="form-layout">
-    <section class="card" data-lang-tabs>
+    <section class="card" data-bilingual>
         <div class="card-body">
-            <div class="lang-tabs" role="tablist">
-                <button type="button" class="on" data-pane="ar">{{ __('العربية') }}</button>
-                <button type="button" data-pane="en">English</button>
-            </div>
             <div class="lang-pane fields" data-pane="ar">
+                    <span class="pane-label">العربية</span>
                 <div class="field @error('name') has-error @enderror">
                     <label for="name">{{ __('اسم التصنيف') }} <em>*</em></label>
                     <input class="input" id="name" name="name" value="{{ old('name', $category->name) }}" required placeholder="{{ __('مثال: المكسرات') }}">
@@ -19,10 +16,11 @@
                     <span class="hint">{{ __('وصف قصير يظهر تحت اسم التصنيف في الرئيسية.') }}</span>
                 </div>
             </div>
-            <div class="lang-pane fields" data-pane="en" hidden>
+            <div class="lang-pane fields" data-pane="en" lang="en" dir="ltr">
+                    <span class="pane-label">English</span>
                 <div class="field @error('name_en') has-error @enderror">
-                    <label for="name_en">Name</label>
-                    <input class="input" id="name_en" name="name_en" value="{{ old('name_en', $category->name_en) }}" dir="ltr" placeholder="e.g. Nuts">
+                    <label for="name_en">Name <em>*</em></label>
+                    <input class="input" id="name_en" name="name_en" value="{{ old('name_en', $category->name_en) }}" dir="ltr" placeholder="e.g. Nuts" required>
                     @error('name_en')<span class="error">{{ $message }}</span>@enderror
                 </div>
                 <div class="field @error('description_en') has-error @enderror">

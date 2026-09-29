@@ -94,7 +94,6 @@
     "استفسارات هذا المنتج": "Inquiries for this product",
     "إلغاء": "Cancel",
     "حفظ التعديلات": "Save changes",
-    "املأ البيانات بالعربي، والإنجليزي اختياري.": "Fill in the Arabic details. English is optional.",
     "حفظ المنتج": "Save product",
     "مصادر المكسرات والقهوة، وتظهر كفلتر «بلد المنشأ» في صفحة المنتجات.": "Where your nuts and coffee come from. Shown as the “Country of origin” filter on the products page.",
     "إضافة بلد منشأ": "Add origin",
@@ -272,5 +271,7 @@
     "صور مختارة: ": "Images selected: ",
     "يمكنك رفع 12 صورة كحد أقصى في المرة الواحدة.": "You can upload up to 12 images at a time.",
     "كل ملف في الصور الإضافية يجب أن يكون صورة.": "Every extra image must be an image file.",
-    "حجم كل صورة يجب ألا يزيد عن 10 ميجا.": "Each image must be 10 MB or smaller."
+    "حجم كل صورة يجب ألا يزيد عن 10 ميجا.": "Each image must be 10 MB or smaller.",
+    "جاري التنفيذ…": "Working…",
+    "املأ البيانات بالعربي والإنجليزي.": "Fill in the details in Arabic and English."
 }

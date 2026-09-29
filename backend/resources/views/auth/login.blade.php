@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=7">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=10">
 </head>
 <body>
 <main class="login">
@@ -66,6 +66,19 @@
     </section>
 </main>
 <script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+        if (this.dataset.loading) { e.preventDefault(); return; }
+        this.dataset.loading = '1';
+        const btn = this.querySelector('button[type=submit]');
+        btn.classList.add('is-loading');
+        btn.setAttribute('aria-busy', 'true');
+        btn.insertAdjacentHTML('afterbegin', '<span class="spin" aria-hidden="true"></span>');
+    });
+    window.addEventListener('pageshow', function (e) {
+        if (!e.persisted) return;
+        const f = document.querySelector('form'); delete f.dataset.loading;
+        const b = f.querySelector('button[type=submit]'); b.classList.remove('is-loading'); b.querySelector('.spin')?.remove();
+    });
     document.getElementById('togglePw').addEventListener('click', function () {
         const input = document.getElementById('password');
         const show = input.type === 'password';

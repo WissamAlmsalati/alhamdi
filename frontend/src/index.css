@@ -662,12 +662,13 @@ h1, h2, h3, h4 { font-weight: 400; letter-spacing: 0; }
 .sig img { width: 52px; height: 52px; object-fit: contain; }
 .intro .word { overflow: visible; }
 
-/* Real product photos fill the image area (drawn fallbacks keep their padding) */
+/* Real product photos: show the whole photo (tall or wide uploads are never cropped) on white */
 .thumb:has(img) { background: #fff; }
-.thumb img { padding: 0; object-fit: cover; }
+.thumb img { padding: 4%; object-fit: contain; }
 .gal .main:has(img) { background: #fff; }
-.gal .main img { padding: 0; object-fit: cover; }
-.sheet-head .mini img { padding: 0; object-fit: cover; }
+.gal .main img { padding: 3%; object-fit: contain; }
+.sheet-head .mini img { padding: 2px; object-fit: contain; }
+.gal .thumbs button img { object-fit: contain; background: #fff; }
 
 /* Product image gallery */
 .gal { display: grid; gap: 12px; }

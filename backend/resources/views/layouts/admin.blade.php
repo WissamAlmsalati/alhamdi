@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=7">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=10">
 </head>
 <body>
 @php
@@ -169,6 +169,8 @@
     document.getElementById('confirmYes').addEventListener('click', () => {
         if (!pending) return;
         pending.dataset.confirmed = '1';
+        const yes = document.getElementById('confirmYes');
+        window.adminLoading && window.adminLoading.start(pending, yes);
         pending.submit();
     });
 
@@ -212,6 +214,68 @@
 
     // Auto-submit filter selects
     document.querySelectorAll('[data-autosubmit]').forEach(el => el.addEventListener('change', () => el.form.submit()));
+})();
+</script>
+<div class="page-loading" id="pageLoading" aria-hidden="true"></div>
+<script>
+// Loading feedback: spinner + disabled button on any form submit, and a top bar on page navigation.
+(function () {
+    const bar = document.getElementById('pageLoading');
+    const busyText = @json(__('جاري التنفيذ…'));
+
+    function setBusy(btn) {
+        if (!btn || btn.classList.contains('is-loading')) return;
+        btn.classList.add('is-loading');
+        btn.setAttribute('aria-busy', 'true');
+        btn.setAttribute('aria-disabled', 'true');
+        if (!btn.querySelector('.spin')) btn.insertAdjacentHTML('afterbegin', '<span class="spin" aria-hidden="true"></span>');
+        const sr = document.createElement('span');
+        sr.className = 'sr-only';
+        sr.textContent = busyText;
+        btn.appendChild(sr);
+    }
+    function start(form, btn) {
+        bar.classList.add('on');
+        const target = btn || form?.querySelector('button[type=submit], button:not([type])');
+        setBusy(target);
+        // Lock the other submit buttons of this form so it can't be sent twice.
+        form?.querySelectorAll('button[type=submit], button:not([type])').forEach(b => { if (b !== target) b.disabled = true; });
+    }
+    window.adminLoading = { start };
+
+    document.addEventListener('submit', e => {
+        if (e.defaultPrevented) return; // e.g. waiting for the delete confirmation
+        const form = e.target;
+        if (form.dataset.loading) { e.preventDefault(); return; } // already submitting
+        form.dataset.loading = '1';
+        start(form, e.submitter);
+    });
+
+    // Top bar for normal page links.
+    document.addEventListener('click', e => {
+        const a = e.target.closest('a[href]');
+        if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if (a.target === '_blank' || a.hasAttribute('download')) return;
+        const href = a.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return;
+        if (a.origin !== location.origin) return;
+        bar.classList.add('on');
+        if (a.classList.contains('btn') || a.classList.contains('icon-btn')) setBusy(a);
+    });
+
+    // Coming back with the browser's back button restores the page from cache: clear the loading state.
+    window.addEventListener('pageshow', e => {
+        if (!e.persisted) return;
+        bar.classList.remove('on');
+        document.querySelectorAll('.is-loading').forEach(b => {
+            b.classList.remove('is-loading');
+            b.removeAttribute('aria-busy');
+            b.removeAttribute('aria-disabled');
+            b.querySelector('.spin')?.remove();
+        });
+        document.querySelectorAll('form[data-loading]').forEach(f => delete f.dataset.loading);
+        document.querySelectorAll('button[disabled]').forEach(b => b.disabled = false);
+    });
 })();
 </script>
 @stack('scripts')

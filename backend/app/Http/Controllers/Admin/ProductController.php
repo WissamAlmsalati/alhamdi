@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -48,7 +49,7 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'name_en' => 'nullable|string|max:255',
+            'name_en' => 'required|string|max:255',
             'description' => 'nullable|string',
             'description_en' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
@@ -72,7 +73,7 @@ class ProductController extends Controller
         $data['is_active'] = $request->boolean('is_active', true);
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $data['image'] = ImageOptimizer::store($request->file('image'), 'products');
         }
 
         if ($request->hasFile('catalog')) {
@@ -96,7 +97,7 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'name_en' => 'nullable|string|max:255',
+            'name_en' => 'required|string|max:255',
             'description' => 'nullable|string',
             'description_en' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
@@ -123,7 +124,7 @@ class ProductController extends Controller
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $data['image'] = ImageOptimizer::store($request->file('image'), 'products');
         }
 
         if ($request->hasFile('catalog')) {
@@ -168,7 +169,7 @@ class ProductController extends Controller
         $order = (int) $product->images()->max('sort_order');
         foreach ($request->file('gallery', []) as $file) {
             $product->images()->create([
-                'path' => $file->store('products', 'public'),
+                'path' => ImageOptimizer::store($file, 'products'),
                 'sort_order' => ++$order,
             ]);
         }

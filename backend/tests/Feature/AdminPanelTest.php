@@ -94,6 +94,7 @@ class AdminPanelTest extends TestCase
     {
         $this->actingAs($this->admin)->put(route('admin.products.update', $this->product), [
             'name' => $this->product->name,
+            'name_en' => 'Aleppo pistachio',
             'category_id' => $this->product->category_id,
             'is_active' => '0',
         ])->assertRedirect(route('admin.products.index'));
@@ -116,6 +117,7 @@ class AdminPanelTest extends TestCase
 
         $this->actingAs($this->admin)->post(route('admin.certificates.store'), [
             'title' => 'رخصة الاستيراد',
+            'title_en' => 'Import license',
             'issuer' => 'وزارة الاقتصاد',
             'number' => 'IMP-1',
             'issued_at' => '2025-01-01',
@@ -205,6 +207,7 @@ class AdminPanelTest extends TestCase
 
         $this->actingAs($this->admin)->put(route('admin.products.update', $this->product), [
             'name' => $this->product->name,
+            'name_en' => 'Aleppo pistachio',
             'category_id' => $this->product->category_id,
             'is_active' => '1',
             'gallery' => [
@@ -226,6 +229,7 @@ class AdminPanelTest extends TestCase
 
         $this->actingAs($this->admin)->put(route('admin.products.update', $this->product), [
             'name' => $this->product->name,
+            'name_en' => 'Aleppo pistachio',
             'category_id' => $this->product->category_id,
             'is_active' => '1',
             'remove_images' => [$images[0]->id],
@@ -239,8 +243,40 @@ class AdminPanelTest extends TestCase
     {
         $this->actingAs($this->admin)->put(route('admin.products.update', $this->product), [
             'name' => $this->product->name,
+            'name_en' => 'Aleppo pistachio',
             'category_id' => $this->product->category_id,
             'gallery' => [UploadedFile::fake()->create('doc.pdf', 10, 'application/pdf')],
         ])->assertSessionHasErrors('gallery.0');
+    }
+
+    public function test_large_uploads_are_resized_and_saved_as_jpeg(): void
+    {
+        Storage::fake('public');
+
+        $this->actingAs($this->admin)->put(route('admin.products.update', $this->product), [
+            'name' => $this->product->name,
+            'name_en' => 'Aleppo pistachio',
+            'category_id' => $this->product->category_id,
+            'is_active' => '1',
+            'image' => UploadedFile::fake()->image('tall.png', 1242, 2688),
+        ])->assertRedirect(route('admin.products.index'));
+
+        $path = $this->product->fresh()->image;
+        $this->assertStringEndsWith('.jpg', $path);
+        [$width, $height] = getimagesizefromstring(Storage::disk('public')->get($path));
+        $this->assertSame(1600, max($width, $height));
+        $this->assertSame(739, $width);
+    }
+
+    public function test_english_name_is_required(): void
+    {
+        $this->actingAs($this->admin)->post(route('admin.categories.store'), ['name' => 'القهوة'])
+            ->assertSessionHasErrors('name_en');
+
+        $this->actingAs($this->admin)->post(route('admin.categories.store'), ['name' => 'القهوة', 'name_en' => 'Coffee', 'is_active' => '1'])
+            ->assertSessionHasNoErrors();
+
+        $this->actingAs($this->admin)->get(route('admin.products.create'))
+            ->assertOk()->assertSee('data-bilingual', false)->assertSee('name="name_en"', false);
     }
 }
