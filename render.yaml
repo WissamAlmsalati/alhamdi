@@ -60,10 +60,13 @@ services:
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
     envVars:
-      # The backend's PUBLIC address + /api, e.g. https://mix-backend-xxxx.onrender.com/api
-      # (Render's fromService "host" is the internal hostname, which a browser can't reach.)
-      - key: VITE_API_URL
-        sync: false
+      # Internal host of the backend; the site adds ".onrender.com" to reach it publicly.
+      # To use a custom domain instead, set VITE_API_URL (e.g. https://api.example.com/api) in the dashboard.
+      - key: VITE_API_HOST
+        fromService:
+          type: web
+          name: mix-backend
+          property: host
     routes:
       - type: rewrite
         source: /*
