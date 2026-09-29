@@ -1,52 +1,24 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل تخصص')
+@section('title', __('تعديل :name', ['name' => $category->name]))
+@section('breadcrumb')<a href="{{ route('admin.categories.index') }}">{{ __('التصنيفات') }}</a><span aria-hidden="true">/</span><b>{{ $category->name }}</b>@endsection
 
 @section('content')
-<div class="max-w-xl mx-auto bg-white rounded-xl shadow-sm p-6">
-    <h1 class="text-xl font-bold text-[#01526D] mb-6">تعديل التخصص</h1>
+<div class="page-head">
+    <div><h1>{{ $category->name }}</h1><p>{{ __('آخر تعديل :time', ['time' => $category->updated_at?->diffForHumans()]) }}</p></div>
+</div>
 
-    <form method="POST" action="{{ route('admin.categories.update', $category) }}">
-        @csrf
-        @method('PUT')
+<form method="POST" action="{{ route('admin.categories.update', $category) }}">
+    @csrf
+    @method('PUT')
+    @include('admin.categories._form')
+    <div class="form-foot">
+        <a href="{{ route('admin.categories.index') }}" class="btn btn-ghost">{{ __('إلغاء') }}</a>
+        <button type="submit" class="btn btn-primary"><x-admin.icon name="check" />{{ __('حفظ التعديلات') }}</button>
+    </div>
+</form>
 
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">الاسم (عربي) *</label>
-            <input type="text" name="name" value="{{ old('name', $category->name) }}" required
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
-            @error('name')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">الاسم (إنجليزي)</label>
-            <input type="text" name="name_en" value="{{ old('name_en', $category->name_en) }}" dir="ltr"
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
-            @error('name_en')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">الوصف (عربي)</label>
-            <textarea name="description" rows="3"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">{{ old('description', $category->description) }}</textarea>
-            @error('description')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">الوصف (إنجليزي)</label>
-            <textarea name="description_en" rows="3" dir="ltr"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">{{ old('description_en', $category->description_en) }}</textarea>
-            @error('description_en')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="mb-6 flex items-center gap-2">
-            <input type="checkbox" name="is_active" value="1" id="is_active" class="w-4 h-4 text-[#2FAB4B]" {{ $category->is_active ? 'checked' : '' }}>
-            <label for="is_active" class="text-sm text-gray-700">نشط</label>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <button type="submit" class="bg-[#2FAB4B] hover:bg-[#237a4a] text-white px-6 py-2 rounded-lg">تحديث</button>
-            <a href="{{ route('admin.categories.index') }}" class="text-gray-600 hover:text-gray-800">إلغاء</a>
-        </div>
-    </form>
+<div style="margin-top:28px">
+    <x-admin.delete-button :action="route('admin.categories.destroy', $category)" label="{{ __('حذف') }}" title="{{ __('حذف التصنيف') }}" :message="__('سيُحذف تصنيف «:name» وكل المنتجات المرتبطة به نهائياً.', ['name' => $category->name])" />
 </div>
 @endsection

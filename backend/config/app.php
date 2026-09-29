@@ -55,6 +55,12 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     /*
+    | Public website address, used by the admin panel's "open site" links.
+    */
+
+    'frontend_url' => env('FRONTEND_URL', '/'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------

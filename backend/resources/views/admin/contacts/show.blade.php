@@ -1,68 +1,69 @@
 @extends('layouts.admin')
 
-@section('title', 'رسالة تواصل')
+@section('title', __('رسالة من :name', ['name' => $contact->name]))
+@section('breadcrumb')<a href="{{ route('admin.contacts.index') }}">{{ __('رسائل التواصل') }}</a><span aria-hidden="true">/</span><b>{{ $contact->name }}</b>@endsection
 
 @section('content')
-<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm p-6">
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-bold text-[#01526D]">رسالة من {{ $contact->name }}</h1>
-        <a href="{{ route('admin.contacts.index') }}" class="text-gray-600 hover:text-gray-800">العودة</a>
+@php
+    $digits = preg_replace('/\D+/', '', (string) $contact->phone);
+    $waNumber = str_starts_with($digits, '0') ? '218' . substr($digits, 1) : $digits;
+    $mailSubject = rawurlencode('Re: ' . ($contact->subject ?: __('رسالتك إلى ميكس')));
+@endphp
+
+<div class="page-head">
+    <div>
+        <h1>{{ $contact->subject ?: __('رسالة بدون موضوع') }}</h1>
+        <p>{{ __('من :name', ['name' => $contact->name]) }} · {{ $contact->created_at->format('Y-m-d H:i') }} ({{ $contact->created_at->diffForHumans() }})</p>
     </div>
+</div>
 
-    <div class="space-y-4">
-        <div>
-            <p class="text-sm text-gray-500">البريد الإلكتروني</p>
-            <p class="font-medium">{{ $contact->email }}</p>
-        </div>
-
-        <div>
-            <p class="text-sm text-gray-500">رقم الهاتف</p>
-            <p class="font-medium">{{ $contact->phone ?? '-' }}</p>
-        </div>
-
-        <div>
-            <p class="text-sm text-gray-500">الموضوع</p>
-            <p class="font-medium">{{ $contact->subject ?? '-' }}</p>
-        </div>
-
+<div class="form-layout">
+    <section class="card">
+        <dl class="dl">
+            <div><dt>{{ __('الاسم') }}</dt><dd>{{ $contact->name }}</dd></div>
+            <div><dt>{{ __('الهاتف') }}</dt><dd class="ltr num ltr-val">{{ $contact->phone ?: '—' }}</dd></div>
+            <div><dt>{{ __('البريد الإلكتروني') }}</dt><dd class="ltr ltr-val">{{ $contact->email ?: '—' }}</dd></div>
+            <div><dt>{{ __('الحالة') }}</dt><dd>{{ $contact->is_read ? __('مقروءة') : __('جديدة') }}</dd></div>
+        </dl>
+        <div class="message-box">{{ $contact->message }}</div>
         @if ($contact->attachment)
-        <div>
-            <p class="text-sm text-gray-500">المرفق</p>
-            <a href="{{ asset('storage/' . $contact->attachment) }}" target="_blank" class="inline-block mt-1 text-[#2FAB4B] hover:underline font-medium">عرض الملف المرفق</a>
-        </div>
+            <div class="card-body" style="border-top:1.5px solid var(--line)">
+                <div class="file-chip">
+                    <x-admin.icon name="file" />
+                    <span>{{ basename($contact->attachment) }}</span>
+                    <a href="{{ asset('storage/' . $contact->attachment) }}" target="_blank" rel="noopener">{{ __('فتح المرفق') }}</a>
+                </div>
+            </div>
         @endif
+    </section>
 
-        <div>
-            <p class="text-sm text-gray-500">التاريخ</p>
-            <p class="font-medium">{{ $contact->created_at->format('Y-m-d H:i') }}</p>
-        </div>
-
-        <div>
-            <p class="text-sm text-gray-500">الحالة</p>
-            <p class="font-medium">{{ $contact->is_read ? 'مقروءة' : 'جديدة' }}</p>
-        </div>
-
-        <div>
-            <p class="text-sm text-gray-500">الرسالة</p>
-            <p class="mt-2 p-4 bg-gray-50 rounded-lg leading-relaxed">{{ $contact->message }}</p>
-        </div>
-    </div>
-
-    <div class="flex items-center gap-3 mt-6">
-        <form method="POST" action="{{ route('admin.contacts.update', $contact) }}">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="is_read" value="{{ $contact->is_read ? '0' : '1' }}">
-            <button type="submit" class="bg-[#2FAB4B] hover:bg-[#237a4a] text-white px-6 py-2 rounded-lg">
-                {{ $contact->is_read ? 'تعيين كغير مقروء' : 'تعيين كمقروء' }}
-            </button>
-        </form>
-
-        <form method="POST" action="{{ route('admin.contacts.destroy', $contact) }}" onsubmit="return confirm('هل أنت متأكد؟')">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="text-red-600 hover:underline">حذف</button>
-        </form>
-    </div>
+    <aside class="side">
+        <section class="card">
+            <div class="card-head"><h2>{{ __('الرد') }}</h2></div>
+            <div class="card-body quick">
+                @if ($contact->email)
+                <a class="btn btn-primary" href="mailto:{{ $contact->email }}?subject={{ $mailSubject }}"><x-admin.icon name="mail" />{{ __('رد بالبريد') }}</a>
+                @endif
+                @if ($digits)
+                    <a class="btn" href="https://wa.me/{{ $waNumber }}" target="_blank" rel="noopener"><x-admin.icon name="whatsapp" />{{ __('واتساب') }}</a>
+                    <a class="btn" href="tel:{{ $contact->phone }}"><x-admin.icon name="phone" />{{ __('اتصال') }}</a>
+                @endif
+            </div>
+        </section>
+        <section class="card">
+            <div class="card-body quick">
+                <form method="POST" action="{{ route('admin.contacts.update', $contact) }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="is_read" value="{{ $contact->is_read ? '0' : '1' }}">
+                    <button type="submit" class="btn btn-ghost btn-block">
+                        <x-admin.icon :name="$contact->is_read ? 'eye-off' : 'check'" />
+                        {{ $contact->is_read ? __('تعيين كغير مقروءة') : __('تعيين كمقروءة') }}
+                    </button>
+                </form>
+                <x-admin.delete-button :action="route('admin.contacts.destroy', $contact)" label="{{ __('حذف الرسالة') }}" title="{{ __('حذف الرسالة') }}" :message="__('ستُحذف رسالة :name نهائياً.', ['name' => $contact->name])" />
+            </div>
+        </section>
+    </aside>
 </div>
 @endsection

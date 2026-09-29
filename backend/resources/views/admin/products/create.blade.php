@@ -1,94 +1,19 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة منتج')
+@section('title', __('إضافة منتج'))
+@section('breadcrumb')<a href="{{ route('admin.products.index') }}">{{ __('المنتجات') }}</a><span aria-hidden="true">/</span><b>{{ __('إضافة منتج') }}</b>@endsection
 
 @section('content')
-<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm p-6">
-    <h1 class="text-xl font-bold text-[#01526D] mb-6">إضافة منتج جديد</h1>
-
-    <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
-        @csrf
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">الصورة</label>
-            <input type="file" name="image" accept="image/*"
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
-            @error('image')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">ملف الكتالوج (PDF)</label>
-            <input type="file" name="catalog" accept="application/pdf,.pdf"
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
-            @error('catalog')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">الاسم (عربي) *</label>
-            <input type="text" name="name" value="{{ old('name') }}" required
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
-            @error('name')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">الاسم (إنجليزي)</label>
-            <input type="text" name="name_en" value="{{ old('name_en') }}" dir="ltr"
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
-            @error('name_en')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">الوصف (عربي)</label>
-            <textarea name="description" rows="3"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">{{ old('description') }}</textarea>
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">الوصف (إنجليزي)</label>
-            <textarea name="description_en" rows="3" dir="ltr"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">{{ old('description_en') }}</textarea>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">التخصص</label>
-                <select name="category_id" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
-                    <option value="">اختر</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                    @endforeach
-                </select>
-                @error('category_id')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">العلامة التجارية</label>
-                <select name="brand_id"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
-                    <option value="">اختر</option>
-                    @foreach ($brands as $brand)
-                        <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">السعر</label>
-            <input type="number" step="0.01" name="price" value="{{ old('price') }}"
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none">
-        </div>
-
-        <div class="mb-6 flex items-center gap-2">
-            <input type="checkbox" name="is_active" value="1" checked id="is_active" class="w-4 h-4 text-[#2FAB4B]">
-            <label for="is_active" class="text-sm text-gray-700">نشط</label>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <button type="submit" class="bg-[#2FAB4B] hover:bg-[#237a4a] text-white px-6 py-2 rounded-lg">حفظ</button>
-            <a href="{{ route('admin.products.index') }}" class="text-gray-600 hover:text-gray-800">إلغاء</a>
-        </div>
-    </form>
+<div class="page-head">
+    <div><h1>{{ __('إضافة منتج') }}</h1><p>{{ __('املأ البيانات بالعربي، والإنجليزي اختياري.') }}</p></div>
 </div>
+
+<form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
+    @csrf
+    @include('admin.products._form', ['product' => new \App\Models\Product(['is_active' => true])])
+    <div class="form-foot">
+        <a href="{{ route('admin.products.index') }}" class="btn btn-ghost">{{ __('إلغاء') }}</a>
+        <button type="submit" class="btn btn-primary"><x-admin.icon name="check" />{{ __('حفظ المنتج') }}</button>
+    </div>
+</form>
 @endsection

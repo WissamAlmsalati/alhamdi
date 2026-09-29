@@ -1,62 +1,69 @@
 @extends('layouts.admin')
 
-@section('title', 'العلامات التجارية')
+@section('title', __('بلد المنشأ'))
+@section('breadcrumb')<b>{{ __('بلد المنشأ') }}</b>@endsection
 
 @section('content')
-<div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-[#01526D]">العلامات التجارية</h1>
-    <a href="{{ route('admin.brands.create') }}" class="bg-[#2FAB4B] hover:bg-[#237a4a] text-white px-5 py-2 rounded-lg">إضافة علامة</a>
+<div class="page-head">
+    <div>
+        <h1>{{ __('بلد المنشأ') }}</h1>
+        <p>{{ __('مصادر المكسرات والقهوة، وتظهر كفلتر «بلد المنشأ» في صفحة المنتجات.') }}</p>
+    </div>
+    <div class="actions">
+        <a href="{{ route('admin.brands.create') }}" class="btn btn-primary"><x-admin.icon name="plus" />{{ __('إضافة بلد منشأ') }}</a>
+    </div>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm overflow-hidden">
-    <table class="w-full text-right">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">الشعار</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">الاسم</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">الاسم الإنجليزي</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">الحالة</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">إجراءات</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-            @forelse ($brands as $brand)
-                <tr>
-                    <td class="px-6 py-4">
-                        @if ($brand->logo)
-                            <img src="{{ '/storage/' . $brand->logo }}" alt="{{ $brand->name }}" class="h-12 w-12 object-contain">
-                        @else
-                            <span class="text-gray-400 text-sm">—</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4">{{ $brand->name }}</td>
-                    <td class="px-6 py-4 text-gray-500" dir="ltr">{{ $brand->name_en ?: '-' }}</td>
-                    <td class="px-6 py-4">
-                        @if ($brand->is_active)
-                            <span class="text-green-600 text-sm">نشط</span>
-                        @else
-                            <span class="text-gray-400 text-sm">معطل</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4 flex items-center gap-3">
-                        <a href="{{ route('admin.brands.edit', $brand) }}" class="text-blue-600 hover:underline text-sm">تعديل</a>
-                        <form method="POST" action="{{ route('admin.brands.destroy', $brand) }}" onsubmit="return confirm('هل أنت متأكد؟')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:underline text-sm">حذف</button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">لا توجد علامات تجارية</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
-
-<div class="mt-4">
-    {{ $brands->links() }}
-</div>
+<section class="card">
+    @if ($brands->isEmpty())
+        <x-admin.empty icon="globe" title="{{ __('لا توجد بلدان منشأ بعد') }}" text="{{ __('أضف مصادر مثل سوريا وتركيا وإثيوبيا والبرازيل.') }}" :action="route('admin.brands.create')" action-label="{{ __('إضافة بلد منشأ') }}" />
+    @else
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ __('بلد المنشأ') }}</th>
+                        <th>{{ __('الاسم بالإنجليزي') }}</th>
+                        <th>{{ __('المنتجات') }}</th>
+                        <th>{{ __('الظهور') }}</th>
+                        <th class="t-end"><span class="sr-only">{{ __('إجراءات') }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($brands as $brand)
+                        <tr>
+                            <td>
+                                <div class="cell-media">
+                                    <div class="thumb">
+                                        @if ($brand->logo)<img src="{{ '/storage/' . $brand->logo }}" alt="">@else<x-admin.icon name="globe" />@endif
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('admin.brands.edit', $brand) }}" class="title">{{ $brand->name }}</a>
+                                        @if ($brand->description)<span class="sub">{{ \Illuminate\Support\Str::limit($brand->description, 70) }}</span>@endif
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="muted ltr">{{ $brand->name_en ?: '—' }}</td>
+                            <td class="num">
+                                @if ($brand->products_count)
+                                    <a href="{{ route('admin.products.index', ['brand' => $brand->id]) }}" class="badge plain b-viewed">{{ $brand->products_count }}</a>
+                                @else
+                                    <span class="muted">0</span>
+                                @endif
+                            </td>
+                            <td><x-admin.active-badge :active="$brand->is_active" /></td>
+                            <td>
+                                <div class="row-actions">
+                                    <a href="{{ route('admin.brands.edit', $brand) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $brand->name]) }}"><x-admin.icon name="edit" /></a>
+                                    <x-admin.delete-button :action="route('admin.brands.destroy', $brand)" title="{{ __('حذف بلد المنشأ') }}" :message="__('سيُحذف «:name» نهائياً. المنتجات المرتبطة به تبقى بدون بلد منشأ.', ['name' => $brand->name])" />
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        {{ $brands->links('vendor.pagination.admin') }}
+    @endif
+</section>
 @endsection

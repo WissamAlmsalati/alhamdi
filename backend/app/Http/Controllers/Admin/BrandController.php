@@ -12,7 +12,7 @@ class BrandController extends Controller
 {
     public function index()
     {
-        $brands = Brand::latest()->paginate(10);
+        $brands = Brand::withCount('products')->latest()->paginate(15);
         return view('admin.brands.index', compact('brands'));
     }
 
@@ -41,7 +41,7 @@ class BrandController extends Controller
 
         Brand::create($data);
 
-        return redirect()->route('admin.brands.index')->with('success', 'تم إضافة العلامة التجارية');
+        return redirect()->route('admin.brands.index')->with('success', __('تم إضافة بلد المنشأ'));
     }
 
     public function edit(Brand $brand)
@@ -72,7 +72,7 @@ class BrandController extends Controller
 
         $brand->update($data);
 
-        return redirect()->route('admin.brands.index')->with('success', 'تم تعديل العلامة التجارية');
+        return redirect()->route('admin.brands.index')->with('success', __('تم تعديل بلد المنشأ'));
     }
 
     public function destroy(Brand $brand)
@@ -81,6 +81,6 @@ class BrandController extends Controller
             Storage::disk('public')->delete($brand->logo);
         }
         $brand->delete();
-        return redirect()->route('admin.brands.index')->with('success', 'تم حذف العلامة التجارية');
+        return redirect()->route('admin.brands.index')->with('success', __('تم حذف بلد المنشأ'));
     }
 }

@@ -30,7 +30,7 @@ class AuthController extends Controller
             if (! Auth::user()->is_admin) {
                 Auth::logout();
                 throw ValidationException::withMessages([
-                    'email' => 'Only admin accounts can access the backend.',
+                    'email' => __('هذا الحساب لا يملك صلاحية الدخول إلى لوحة التحكم.'),
                 ]);
             }
 
@@ -38,7 +38,7 @@ class AuthController extends Controller
         }
 
         throw ValidationException::withMessages([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => __('البريد الإلكتروني أو كلمة المرور غير صحيحة.'),
         ]);
     }
 

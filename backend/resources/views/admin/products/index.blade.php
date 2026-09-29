@@ -1,71 +1,103 @@
 @extends('layouts.admin')
 
-@section('title', 'المنتجات')
+@section('title', __('المنتجات'))
+@section('breadcrumb')<b>{{ __('المنتجات') }}</b>@endsection
 
 @section('content')
-<div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-[#01526D]">المنتجات</h1>
-    <a href="{{ route('admin.products.create') }}" class="bg-[#2FAB4B] hover:bg-[#237a4a] text-white px-5 py-2 rounded-lg">إضافة منتج</a>
+<div class="page-head">
+    <div>
+        <h1>{{ __('المنتجات') }}</h1>
+        <p>{{ __('المكسرات والقهوة والخلطات المعروضة في الموقع.') }}</p>
+    </div>
+    <div class="actions">
+        <a href="{{ route('admin.products.create') }}" class="btn btn-primary"><x-admin.icon name="plus" />{{ __('إضافة منتج') }}</a>
+    </div>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm overflow-hidden">
-    <table class="w-full text-right">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">الصورة</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">الاسم</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">التخصص</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">العلامة</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">السعر</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">الحالة</th>
-                <th class="px-6 py-3 text-sm font-semibold text-gray-600">إجراءات</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-            @forelse ($products as $product)
-                <tr>
-                    <td class="px-6 py-4">
-                        @if ($product->image)
-                            <img src="{{ '/storage/' . $product->image }}" alt="{{ $product->name }}" class="h-14 w-14 object-contain">
-                        @else
-                            <span class="text-gray-400 text-sm">—</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ $product->name }}
-                        @if ($product->name_en)
-                            <div class="text-xs text-gray-500" dir="ltr">{{ $product->name_en }}</div>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4">{{ $product->category->name ?? '-' }}</td>
-                    <td class="px-6 py-4">{{ $product->brand->name ?? '-' }}</td>
-                    <td class="px-6 py-4">{{ $product->price ? number_format($product->price, 2) : '-' }}</td>
-                    <td class="px-6 py-4">
-                        @if ($product->is_active)
-                            <span class="text-green-600 text-sm">نشط</span>
-                        @else
-                            <span class="text-gray-400 text-sm">معطل</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4 flex items-center gap-3">
-                        <a href="{{ route('admin.products.edit', $product) }}" class="text-blue-600 hover:underline text-sm">تعديل</a>
-                        <form method="POST" action="{{ route('admin.products.destroy', $product) }}" onsubmit="return confirm('هل أنت متأكد؟')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:underline text-sm">حذف</button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="7" class="px-6 py-8 text-center text-gray-500">لا توجد منتجات</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
+<section class="card">
+    <form method="GET" class="toolbar" role="search">
+        <label class="search">
+            <x-admin.icon name="search" />
+            <span class="sr-only">{{ __('بحث') }}</span>
+            <input type="search" name="q" value="{{ $search }}" placeholder="{{ __('ابحث باسم المنتج بالعربي أو الإنجليزي') }}">
+        </label>
+        <select name="category" data-autosubmit aria-label="{{ __('التصنيف') }}">
+            <option value="">{{ __('كل التصنيفات') }}</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}" @selected($categoryId == $category->id)>{{ $category->name }}</option>
+            @endforeach
+        </select>
+        <select name="status" data-autosubmit aria-label="{{ __('الظهور') }}">
+            <option value="">{{ __('كل الحالات') }}</option>
+            <option value="active" @selected($status === 'active')>{{ __('ظاهر في الموقع') }}</option>
+            <option value="hidden" @selected($status === 'hidden')>{{ __('مخفي') }}</option>
+        </select>
+        @if ($brandId)<input type="hidden" name="brand" value="{{ $brandId }}">@endif
+        <button type="submit" class="btn btn-dark">{{ __('بحث') }}</button>
+        @if ($search || $categoryId || $status || $brandId)
+            <a href="{{ route('admin.products.index') }}" class="btn btn-ghost">{{ __('مسح') }}</a>
+        @endif
+    </form>
 
-<div class="mt-4">
-    {{ $products->links() }}
-</div>
+    @if ($products->isEmpty())
+        @if ($search || $categoryId || $status || $brandId)
+            <x-admin.empty icon="search" title="{{ __('لا توجد منتجات مطابقة') }}" text="{{ __('جرّب كلمة بحث أخرى أو امسح الفلاتر.') }}" />
+        @else
+            <x-admin.empty icon="box" title="{{ __('لا توجد منتجات بعد') }}" text="{{ __('أضف أول منتج ليظهر في الموقع.') }}" :action="route('admin.products.create')" action-label="{{ __('إضافة منتج') }}" />
+        @endif
+    @else
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ __('المنتج') }}</th>
+                        <th>{{ __('التصنيف') }}</th>
+                        <th>{{ __('بلد المنشأ') }}</th>
+                        <th>{{ __('الاستفسارات') }}</th>
+                        <th>{{ __('الظهور') }}</th>
+                        <th class="t-end"><span class="sr-only">{{ __('إجراءات') }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($products as $product)
+                        <tr>
+                            <td>
+                                <div class="cell-media">
+                                    <div class="thumb">
+                                        @if ($product->image)
+                                            <img src="{{ '/storage/' . $product->image }}" alt="">
+                                        @else
+                                            <x-admin.icon name="image" />
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('admin.products.edit', $product) }}" class="title">{{ $product->name }}</a>
+                                        @if ($product->name_en)<span class="sub ltr">{{ $product->name_en }}</span>@endif
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ $product->category->name ?? '—' }}</td>
+                            <td>{{ $product->brand->name ?? '—' }}</td>
+                            <td class="num">
+                                @if ($product->orders_count)
+                                    <a href="{{ route('admin.orders.index', ['q' => $product->name]) }}" class="badge plain b-viewed">{{ $product->orders_count }}</a>
+                                @else
+                                    <span class="muted">0</span>
+                                @endif
+                            </td>
+                            <td><x-admin.active-badge :active="$product->is_active" /></td>
+                            <td>
+                                <div class="row-actions">
+                                    <a href="{{ route('admin.products.edit', $product) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $product->name]) }}"><x-admin.icon name="edit" /></a>
+                                    <x-admin.delete-button :action="route('admin.products.destroy', $product)" title="{{ __('حذف المنتج') }}" :message="__('سيُحذف «:name» وصورته والكتالوج واستفساراته نهائياً.', ['name' => $product->name])" />
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        {{ $products->links('vendor.pagination.admin') }}
+    @endif
+</section>
 @endsection

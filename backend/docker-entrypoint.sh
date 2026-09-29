@@ -6,9 +6,22 @@ if [ ! -f /var/www/html/.env ]; then
     cp /var/www/html/.env.example /var/www/html/.env
 fi
 
+# Render's generateValue gives a random string without Laravel's "base64:" prefix; add it.
+if [ -n "$APP_KEY" ] && [ "${APP_KEY#base64:}" = "$APP_KEY" ]; then
+    export APP_KEY="base64:$(printf '%s' "$APP_KEY" | head -c 32 | base64)"
+fi
+
 # Generate app key if missing
 if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "base64:" ]; then
     php artisan key:generate --force
+fi
+
+# On Render, use the service's public URL when APP_URL isn't set.
+if [ -z "$APP_URL" ] && [ -n "$RENDER_EXTERNAL_URL" ]; then
+    export APP_URL="$RENDER_EXTERNAL_URL"
+fi
+if [ -n "$FRONTEND_HOST" ] && [ -z "$FRONTEND_URL" ]; then
+    export FRONTEND_URL="https://$FRONTEND_HOST"
 fi
 
 # Wait for MySQL to be ready when using mysql driver

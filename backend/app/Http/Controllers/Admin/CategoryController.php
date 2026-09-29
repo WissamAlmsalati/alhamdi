@@ -11,7 +11,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::latest()->paginate(10);
+        $categories = Category::withCount('products')->latest()->paginate(15);
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -35,7 +35,7 @@ class CategoryController extends Controller
 
         Category::create($data);
 
-        return redirect()->route('admin.categories.index')->with('success', 'تم إضافة التخصص');
+        return redirect()->route('admin.categories.index')->with('success', __('تم إضافة التصنيف'));
     }
 
     public function edit(Category $category)
@@ -58,12 +58,12 @@ class CategoryController extends Controller
 
         $category->update($data);
 
-        return redirect()->route('admin.categories.index')->with('success', 'تم تعديل التخصص');
+        return redirect()->route('admin.categories.index')->with('success', __('تم تعديل التصنيف'));
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'تم حذف التخصص');
+        return redirect()->route('admin.categories.index')->with('success', __('تم حذف التصنيف'));
     }
 }

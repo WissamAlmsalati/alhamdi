@@ -1,77 +1,57 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { LanguageProvider } from './context/LanguageContext.jsx'
-import Navbar from './components/Navbar.jsx'
-import Hero from './components/Hero.jsx'
-import Stats from './components/Stats.jsx'
-import About from './components/About.jsx'
-import Specialties from './components/Specialties.jsx'
-import Products from './components/Products.jsx'
-import Partners from './components/Partners.jsx'
-import CTA from './components/CTA.jsx'
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
+import { LanguageProvider, useLanguage } from './context/LanguageContext.jsx'
+import { InquiryProvider } from './components/InquiryModal.jsx'
+import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
-import ProductDetails from './pages/ProductDetails.jsx'
+import { Intro, ScrollManager, ScrollProgress } from './components/Effects.jsx'
+import Home from './pages/Home.jsx'
 import ProductsPage from './pages/ProductsPage.jsx'
+import ProductDetails from './pages/ProductDetails.jsx'
+import AboutPage from './pages/AboutPage.jsx'
 import ContactPage from './pages/ContactPage.jsx'
 
-function ScrollToTop() {
-  const { pathname } = useLocation()
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [pathname])
-
-  return null
+function NotFound() {
+  const { t } = useLanguage()
+  return (
+    <div className="wrap state" style={{ paddingBlock: 120 }}>
+      <h1 style={{ color: 'var(--text)', fontSize: 64 }}>404</h1>
+      <p>{t('notFoundText')}</p>
+      <Link className="btn" to="/"><span>{t('home')}</span></Link>
+    </div>
+  )
 }
 
-function Home() {
-  const [selectedCategory, setSelectedCategory] = useState(null)
-
-  useEffect(() => {
-    const handleSelectCategory = (e) => {
-      setSelectedCategory(e.detail)
-      document.getElementById('products')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-
-    window.addEventListener('selectCategory', handleSelectCategory)
-    return () => window.removeEventListener('selectCategory', handleSelectCategory)
-  }, [])
-
+function Shell() {
   return (
     <>
-      <Navbar />
-      <main className="flex-1 flex flex-col">
-        <Hero className="order-1 md:order-none" />
-        <Partners className="order-2 md:order-none" />
-        <About className="order-3 md:order-none" />
-        <Stats className="order-4 md:order-none" />
-        <Products selectedCategory={selectedCategory} className="order-5 md:order-none" />
-        <Specialties
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          className="order-6 md:order-none"
-        />
-        <CTA className="order-7 md:order-none" />
+      <Intro />
+      <ScrollProgress />
+      <ScrollManager />
+      <div className="grain" aria-hidden="true" />
+      <Header />
+      <main id="main">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </main>
       <Footer />
     </>
   )
 }
 
-function App() {
+export default function App() {
   return (
     <LanguageProvider>
       <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
-          <Route path="/contact" element={<ContactPage />} />
-        </Routes>
+        <InquiryProvider>
+          <Shell />
+        </InquiryProvider>
       </BrowserRouter>
     </LanguageProvider>
   )
 }
-
-export default App

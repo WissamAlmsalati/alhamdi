@@ -1,255 +1,191 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { API_URL } from '../config/api.js'
 import { useLanguage } from '../context/LanguageContext.jsx'
-import Navbar from '../components/Navbar.jsx'
-import Footer from '../components/Footer.jsx'
+import { postForm } from '../lib/api.js'
+import { SITE, whatsappLink } from '../config/site.js'
+import PageHeader from '../components/PageHeader.jsx'
+import Icon from '../components/Icon.jsx'
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const MAX_FILE = 5 * 1024 * 1024
+
+function CopyButton({ value }) {
+  const { t } = useLanguage()
+  const [copied, setCopied] = useState(false)
+  const copy = async (e) => {
+    try {
+      await navigator.clipboard.writeText(value)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      // Clipboard blocked: select the value so the visitor can copy it manually.
+      const el = e.currentTarget.parentElement.querySelector('b')
+      const range = document.createRange()
+      range.selectNodeContents(el)
+      const sel = window.getSelection()
+      sel.removeAllRanges()
+      sel.addRange(range)
+    }
+  }
+  return <button type="button" className="copy-btn" onClick={copy}>{copied ? t('copied') : t('copy')}</button>
+}
 
 export default function ContactPage() {
-  const { t, language } = useLanguage()
-  const isAr = language === 'ar'
+  const { t } = useLanguage()
+  const types = ['typeProduct', 'typeBulk', 'typeOther']
+  const [form, setForm] = useState({ name: '', phone: '', email: '', type: 'typeProduct', subject: '', message: '' })
+  const [file, setFile] = useState(null)
+  const [errors, setErrors] = useState({})
+  const [status, setStatus] = useState('idle')
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-  })
-  const [attachment, setAttachment] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState('')
-
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+  const onFile = (e) => {
+    const f = e.target.files?.[0] || null
+    if (f && f.size > MAX_FILE) {
+      setErrors((x) => ({ ...x, attachment: t('fileTooBig') }))
+      e.target.value = ''
+      setFile(null)
+      return
+    }
+    setErrors((x) => ({ ...x, attachment: undefined }))
+    setFile(f)
   }
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault()
-    setLoading(true)
-    setSuccess(false)
-    setError('')
+    const next = {}
+    if (!form.name.trim()) next.name = t('requiredName')
+    if (!form.phone.trim()) next.phone = t('requiredPhone')
+    if (form.email.trim() && !EMAIL_RE.test(form.email.trim())) next.email = t('invalidEmail')
+    if (!form.message.trim()) next.message = t('requiredMessage')
+    setErrors(next)
+    if (Object.keys(next).length) {
+      document.getElementById(`c-${Object.keys(next)[0]}`)?.focus()
+      return
+    }
+    const fd = new FormData()
+    fd.append('name', form.name.trim())
+    fd.append('phone', form.phone.trim())
+    if (form.email.trim()) fd.append('email', form.email.trim())
+    fd.append('subject', [t(form.type), form.subject.trim()].filter(Boolean).join(' · '))
+    fd.append('message', form.message.trim())
+    if (file) fd.append('attachment', file)
 
-    const data = new FormData()
-    Object.entries(form).forEach(([key, value]) => {
-      if (value) data.append(key, value)
-    })
-    if (attachment) data.append('attachment', attachment)
-
+    setStatus('sending')
     try {
-      const res = await fetch(`${API_URL}/contact`, {
-        method: 'POST',
-        body: data,
-      })
-
-      if (!res.ok) throw new Error('Failed')
-
-      setSuccess(true)
-      setForm({ name: '', email: '', phone: '', subject: '', message: '' })
-      setAttachment(null)
-    } catch {
-      setError(t('sendError'))
-    } finally {
-      setLoading(false)
+      await postForm('/contact', fd)
+      setStatus('sent')
+    } catch (err) {
+      if (err.status === 422 && err.errors) {
+        setErrors({
+          name: err.errors.name && t('requiredName'),
+          phone: err.errors.phone && t('requiredPhone'),
+          email: err.errors.email && t('invalidEmail'),
+          message: err.errors.message && t('requiredMessage'),
+          attachment: err.errors.attachment && t('fileTooBig'),
+        })
+        setStatus('idle')
+      } else {
+        setStatus('failed')
+      }
     }
   }
 
-  return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <Navbar />
-
-      <main className="flex-1 pt-24 md:pt-28 pb-16 md:pb-20">
-        {/* Hero header */}
-        <section className="relative px-5 lg:px-10 pb-12 md:pb-16 overflow-hidden">
-          <div className="max-w-7xl mx-auto">
-            <nav className={`text-sm text-gray-500 mb-4 ${isAr ? 'text-right' : 'text-left'}`} aria-label="Breadcrumb">
-              <Link to="/" className="hover:text-[#2FAB4B] transition-colors">{t('home')}</Link>
-              <span className="mx-2">/</span>
-              <span className="text-[#01526D] font-medium">{t('contactUs')}</span>
-            </nav>
-
-            <div className={`${isAr ? 'text-right' : 'text-left'}`}>
-              <h1 className="text-3xl md:text-4xl font-bold text-[#01526D] mb-3">{t('contactUs')}</h1>
-              <p className="text-gray-600 max-w-2xl">{t('contactSubtitle')}</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Map & form */}
-        <section className="px-5 lg:px-10">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            {/* Map & working hours */}
-            <div className={`order-last lg:order-none ${isAr ? 'lg:order-1' : 'lg:order-1'}`}>
-              <div className={`mb-6 ${isAr ? 'text-right' : 'text-left'}`}>
-                <h2 className="text-xl md:text-2xl font-bold text-[#01526D] mb-2">{t('ourLocation')}</h2>
-                <div className="w-12 h-1 bg-[#2FAB4B] rounded-full" />
-              </div>
-
-              <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm mb-6">
-                <iframe
-                  title={t('ourLocation')}
-                  src="https://maps.google.com/maps?q=32.878384,13.199327&z=15&output=embed"
-                  width="100%"
-                  height="320"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                />
-              </div>
-              <div className={`mb-6 ${isAr ? 'text-right' : 'text-left'}`}>
-                <a
-                  href="https://maps.google.com/?q=32.878384,13.199327"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-[#2FAB4B] hover:underline"
-                >
-                  {isAr ? 'فتح الموقع في Google Maps' : 'Open location in Google Maps'}
-                </a>
-              </div>
-
-              <div className={`bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-sm ${isAr ? 'text-right' : 'text-left'}`}>
-                <h3 className="font-bold text-[#01526D] mb-4 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-[#2FAB4B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {t('workingHours')}
-                </h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">{t('saturdayThursday')}</span>
-                    <span className="font-medium text-[#01526D]" dir="ltr">{t('morning')}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">{t('friday')}</span>
-                    <span className="font-medium text-[#01526D]" dir="ltr">{t('evening')}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact form */}
-            <div className={`order-first lg:order-none ${isAr ? 'lg:order-2' : 'lg:order-2'}`}>
-              <div className={`mb-6 ${isAr ? 'text-right' : 'text-left'}`}>
-                <h2 className="text-xl md:text-2xl font-bold text-[#01526D] mb-2">{t('sendMessage')}</h2>
-                <div className="w-12 h-1 bg-[#2FAB4B] rounded-full" />
-              </div>
-
-              <form
-                onSubmit={handleSubmit}
-                className="bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-sm"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-1 ${isAr ? 'text-right' : 'text-left'}`}>{t('fullName')}</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-1 ${isAr ? 'text-right' : 'text-left'}`}>{t('email')}</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-1 ${isAr ? 'text-right' : 'text-left'}`}>{t('phone')}</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-1 ${isAr ? 'text-right' : 'text-left'}`}>{t('subject')}</label>
-                    <input
-                      type="text"
-                      name="subject"
-                      value={form.subject}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className={`block text-sm font-medium text-gray-700 mb-1 ${isAr ? 'text-right' : 'text-left'}`}>{t('message')}</label>
-                  <textarea
-                    name="message"
-                    value={form.message}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#2FAB4B] focus:border-[#2FAB4B] outline-none text-sm resize-none"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className={`block text-sm font-medium text-gray-700 mb-1 ${isAr ? 'text-right' : 'text-left'}`}>{t('attachment')}</label>
-                  <label className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-dashed border-gray-300 hover:border-[#2FAB4B] cursor-pointer transition-colors">
-                    <svg className="w-5 h-5 text-[#2FAB4B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                    </svg>
-                    <span className="text-sm text-gray-600">
-                      {attachment ? attachment.name : t('attachment')}
-                    </span>
-                    <input
-                      type="file"
-                      onChange={(e) => setAttachment(e.target.files?.[0] || null)}
-                      className="hidden"
-                      accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                    />
-                  </label>
-                </div>
-
-                {success && (
-                  <div className="mb-4 p-3 rounded-xl bg-green-50 text-green-700 text-sm text-center">
-                    {t('contactSuccess')}
-                  </div>
-                )}
-
-                {error && (
-                  <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-700 text-sm text-center">
-                    {error}
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#2FAB4B] hover:bg-[#237a4a] text-white font-semibold py-3 rounded-full transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
-                >
-                  {loading ? (
-                    <span>{t('sending')}</span>
-                  ) : (
-                    <>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                      </svg>
-                      {t('send')}
-                    </>
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <Footer />
+  const field = (key, label, input, required = false, full = false) => (
+    <div className={`field ${full ? 'full' : ''} ${errors[key] ? 'err' : ''}`}>
+      <label htmlFor={`c-${key}`}>{label} {required && <em>*</em>}</label>
+      {input}
+      {errors[key] && <span className="emsg" id={`c-${key}-e`}>{errors[key]}</span>}
     </div>
+  )
+  const aria = (key) => ({ 'aria-invalid': !!errors[key], 'aria-describedby': errors[key] ? `c-${key}-e` : undefined })
+
+  return (
+    <>
+      <PageHeader title1={t('contactPageTitle1')} title2={t('contactPageTitle2')} desc={t('contactPageDesc')} crumbs={[{ label: t('contact') }]} ghost={t('contactPageTitle1')} />
+      <div className="wrap ct">
+        <div className="ways">
+          <div className="way">
+            <span className="ic"><Icon name="whatsapp" /></span>
+            <div><small>{t('whatsapp')}</small><b className="ltr">{SITE.whatsapp}</b></div>
+            <CopyButton value={SITE.whatsapp} />
+          </div>
+          {SITE.phones.map((p) => (
+            <div className="way" key={p}>
+              <span className="ic"><Icon name="phone" /></span>
+              <div><small>{t('phoneLabel')}</small><b className="ltr">{p}</b></div>
+              <CopyButton value={p} />
+            </div>
+          ))}
+          <div className="way">
+            <span className="ic"><Icon name="pin" /></span>
+            <div><small>{t('addressLabel')}</small><b>{t('addressValue')}</b></div>
+          </div>
+          <div className="hours">
+            <h3>{t('workingHours')}</h3>
+            <div><span>{t('satThu')}</span><span>{t('morningShift')}</span></div>
+            <div><span>{t('satThu')}</span><span>{t('eveningShift')}</span></div>
+            <div><span>{t('friday')}</span><span className="closed">{t('closed')}</span></div>
+          </div>
+          <div className="mapbox">
+            <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#161616" />
+              <g stroke="#2A2A2A" strokeWidth="10" fill="none"><path d="M-10 70 L410 110" /><path d="M-10 190 L410 160" /><path d="M120 -10 L150 260" /><path d="M290 -10 L260 260" /></g>
+              <g stroke="#222" strokeWidth="4" fill="none"><path d="M-10 130 L410 135" /><path d="M60 -10 L80 260" /><path d="M350 -10 L340 260" /></g>
+              <circle cx="205" cy="128" r="30" fill="#F26B1D" opacity=".18" /><circle cx="205" cy="128" r="9" fill="#F26B1D" />
+            </svg>
+            <a className="btn orange" href={SITE.mapsUrl} target="_blank" rel="noopener noreferrer"><span>{t('openMaps')}</span></a>
+          </div>
+        </div>
+
+        <div className="form-card">
+          {status === 'sent' ? (
+            <div className="done" role="status">
+              <span className="ok" aria-hidden="true">✓</span>
+              <h3>{t('contactSentTitle')}</h3>
+              <p>{t('contactSentText')}</p>
+              <Link className="btn" to="/products"><span>{t('browseProducts')}</span><span className="arrow">→</span></Link>
+            </div>
+          ) : (
+            <>
+              <h2>{t('sendYourInquiry')}</h2>
+              <p>{t('formIntro')}</p>
+              <form onSubmit={submit} noValidate>
+                <div className="fields">
+                  {field('name', t('fullName'), <input id="c-name" value={form.name} onChange={set('name')} autoComplete="name" placeholder={t('namePlaceholder')} {...aria('name')} />, true)}
+                  {field('phone', t('phone'), <input id="c-phone" type="tel" dir="ltr" value={form.phone} onChange={set('phone')} autoComplete="tel" placeholder="09X XXX XXXX" {...aria('phone')} />, true)}
+                  {field('email', t('emailOptional'), <input id="c-email" type="email" dir="ltr" value={form.email} onChange={set('email')} autoComplete="email" {...aria('email')} />, false, true)}
+                  <div className="field full">
+                    <span className="label" id="c-type-l">{t('inquiryType')}</span>
+                    <div className="pills" role="radiogroup" aria-labelledby="c-type-l">
+                      {types.map((k) => (
+                        <button key={k} type="button" role="radio" aria-checked={form.type === k} className="pill" onClick={() => setForm((f) => ({ ...f, type: k }))}>{t(k)}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {field('subject', t('subject'), <input id="c-subject" value={form.subject} onChange={set('subject')} placeholder={t('subjectPlaceholder')} />, false, true)}
+                  {field('message', t('message'), <textarea id="c-message" value={form.message} onChange={set('message')} placeholder={t('messagePlaceholder')} {...aria('message')} />, true, true)}
+                  <div className={`field full ${errors.attachment ? 'err' : ''}`}>
+                    <label className="drop" htmlFor="c-file">
+                      <Icon name="clip" style={{ width: 20, height: 20, flex: 'none' }} />
+                      <span>{file ? <><b>{file.name}</b> · {t('fileReady')}</> : <><b>{t('attachFile')}</b> · {t('attachHint')}</>}</span>
+                    </label>
+                    <input id="c-file" type="file" className="sr-only" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" onChange={onFile} />
+                    {errors.attachment && <span className="emsg">{errors.attachment}</span>}
+                  </div>
+                </div>
+                {status === 'failed' && <div className="form-error" role="alert">{t('sendError')}</div>}
+                <button type="submit" className="btn fill block" disabled={status === 'sending'}>
+                  <span>{status === 'sending' ? t('sending') : t('sendInquiry')}</span><span className="arrow">→</span>
+                </button>
+                <p className="note" style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 12 }}>
+                  <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)', fontWeight: 700 }}>{t('messageOnWhatsapp')}</a>
+                </p>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
+    </>
   )
 }
