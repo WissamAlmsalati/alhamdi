@@ -33,7 +33,7 @@ class ProductController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        $categories = Category::orderBy('name')->get(['id', 'name']);
+        $categories = Category::orderBy('name')->get(['id', 'name', 'name_en']);
 
         return view('admin.products.index', compact('products', 'categories', 'search', 'categoryId', 'status', 'brandId'));
     }

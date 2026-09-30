@@ -273,5 +273,6 @@
     "كل ملف في الصور الإضافية يجب أن يكون صورة.": "Every extra image must be an image file.",
     "حجم كل صورة يجب ألا يزيد عن 10 ميجا.": "Each image must be 10 MB or smaller.",
     "جاري التنفيذ…": "Working…",
-    "املأ البيانات بالعربي والإنجليزي.": "Fill in the details in Arabic and English."
+    "املأ البيانات بالعربي والإنجليزي.": "Fill in the details in Arabic and English.",
+    "الاسم بالعربي": "Arabic name"
 }

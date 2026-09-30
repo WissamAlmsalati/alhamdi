@@ -67,7 +67,7 @@
                                     <div class="thumb" style="width:40px;height:40px">
                                         @if ($order->product?->image)<img src="{{ '/storage/' . $order->product->image }}" alt="">@else<x-admin.icon name="box" />@endif
                                     </div>
-                                    <span>{{ $order->product?->name ?? __('منتج محذوف') }}</span>
+                                    <span>{{ $order->product?->display_name ?? __('منتج محذوف') }}</span>
                                 </div>
                             </td>
                             <td>

@@ -279,4 +279,22 @@ class AdminPanelTest extends TestCase
         $this->actingAs($this->admin)->get(route('admin.products.create'))
             ->assertOk()->assertSee('data-bilingual', false)->assertSee('name="name_en"', false);
     }
+
+    public function test_admin_lists_show_names_in_the_panel_language(): void
+    {
+        $this->product->update(['name_en' => 'Aleppo pistachio']);
+        $this->product->category->update(['name_en' => 'Nuts']);
+
+        $this->actingAs($this->admin)->get(route('admin.products.index'))
+            ->assertSee('class="title">فستق حلبي', false);
+
+        $this->actingAs($this->admin)->get(route('locale.switch', 'en'));
+
+        $this->actingAs($this->admin)->get(route('admin.products.index'))
+            ->assertSee('class="title">Aleppo pistachio', false)->assertSee('Nuts');
+
+        // The edit form keeps both languages as editable values.
+        $this->actingAs($this->admin)->get(route('admin.products.edit', $this->product))
+            ->assertSee('value="فستق حلبي"', false)->assertSee('value="Aleppo pistachio"', false);
+    }
 }

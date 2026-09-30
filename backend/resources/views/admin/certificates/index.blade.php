@@ -44,12 +44,12 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <a href="{{ route('admin.certificates.edit', $certificate) }}" class="title">{{ $certificate->title }}</a>
+                                        <a href="{{ route('admin.certificates.edit', $certificate) }}" class="title">{{ $certificate->display_title }}</a>
                                         @if ($certificate->title_en)<span class="sub ltr">{{ $certificate->title_en }}</span>@endif
                                     </div>
                                 </div>
                             </td>
-                            <td>{{ $certificate->issuer ?: '—' }}</td>
+                            <td>{{ $certificate->display_issuer ?: '—' }}</td>
                             <td class="ltr num ltr-val">{{ $certificate->number ?: '—' }}</td>
                             <td>
                                 @switch($validity)
@@ -71,10 +71,10 @@
                             <td>
                                 <div class="row-actions">
                                     @if ($certificate->file)
-                                        <a href="{{ '/storage/' . $certificate->file }}" target="_blank" rel="noopener" class="icon-btn" title="{{ __('فتح الملف') }}" aria-label="{{ __('فتح :name', ['name' => $certificate->title]) }}"><x-admin.icon name="eye" /></a>
+                                        <a href="{{ '/storage/' . $certificate->file }}" target="_blank" rel="noopener" class="icon-btn" title="{{ __('فتح الملف') }}" aria-label="{{ __('فتح :name', ['name' => $certificate->display_title]) }}"><x-admin.icon name="eye" /></a>
                                     @endif
-                                    <a href="{{ route('admin.certificates.edit', $certificate) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $certificate->title]) }}"><x-admin.icon name="edit" /></a>
-                                    <x-admin.delete-button :action="route('admin.certificates.destroy', $certificate)" title="{{ __('حذف الملف') }}" :message="__('سيُحذف «:name» والملف المرفوع نهائياً.', ['name' => $certificate->title])" />
+                                    <a href="{{ route('admin.certificates.edit', $certificate) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $certificate->display_title]) }}"><x-admin.icon name="edit" /></a>
+                                    <x-admin.delete-button :action="route('admin.certificates.destroy', $certificate)" title="{{ __('حذف الملف') }}" :message="__('سيُحذف «:name» والملف المرفوع نهائياً.', ['name' => $certificate->display_title])" />
                                 </div>
                             </td>
                         </tr>

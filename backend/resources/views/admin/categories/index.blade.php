@@ -23,7 +23,7 @@
                 <thead>
                     <tr>
                         <th>{{ __('التصنيف') }}</th>
-                        <th>{{ __('الاسم بالإنجليزي') }}</th>
+                        <th>{{ app()->getLocale() === 'en' ? __('الاسم بالعربي') : __('الاسم بالإنجليزي') }}</th>
                         <th>{{ __('المنتجات') }}</th>
                         <th>{{ __('الظهور') }}</th>
                         <th class="t-end"><span class="sr-only">{{ __('إجراءات') }}</span></th>
@@ -36,12 +36,12 @@
                                 <div class="cell-media">
                                     
                                     <div>
-                                        <a href="{{ route('admin.categories.edit', $category) }}" class="title">{{ $category->name }}</a>
-                                        @if ($category->description)<span class="sub">{{ \Illuminate\Support\Str::limit($category->description, 70) }}</span>@endif
+                                        <a href="{{ route('admin.categories.edit', $category) }}" class="title">{{ $category->display_name }}</a>
+                                        @if ($category->display_description)<span class="sub">{{ \Illuminate\Support\Str::limit($category->display_description, 70) }}</span>@endif
                                     </div>
                                 </div>
                             </td>
-                            <td class="muted ltr">{{ $category->name_en ?: '—' }}</td>
+                            <td class="muted {{ app()->getLocale() === 'en' ? '' : 'ltr' }}">{{ (app()->getLocale() === 'en' ? $category->name : $category->name_en) ?: '—' }}</td>
                             <td class="num">
                                 @if ($category->products_count)
                                     <a href="{{ route('admin.products.index', ['category' => $category->id]) }}" class="badge plain b-viewed">{{ $category->products_count }}</a>
@@ -52,8 +52,8 @@
                             <td><x-admin.active-badge :active="$category->is_active" /></td>
                             <td>
                                 <div class="row-actions">
-                                    <a href="{{ route('admin.categories.edit', $category) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $category->name]) }}"><x-admin.icon name="edit" /></a>
-                                    <x-admin.delete-button :action="route('admin.categories.destroy', $category)" title="{{ __('حذف التصنيف') }}" :message="$category->products_count ? __('سيُحذف تصنيف «:name» وكل منتجاته (:count) نهائياً.', ['name' => $category->name, 'count' => $category->products_count]) : __('سيُحذف تصنيف «:name» نهائياً.', ['name' => $category->name])" />
+                                    <a href="{{ route('admin.categories.edit', $category) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $category->display_name]) }}"><x-admin.icon name="edit" /></a>
+                                    <x-admin.delete-button :action="route('admin.categories.destroy', $category)" title="{{ __('حذف التصنيف') }}" :message="$category->products_count ? __('سيُحذف تصنيف «:name» وكل منتجاته (:count) نهائياً.', ['name' => $category->display_name, 'count' => $category->products_count]) : __('سيُحذف تصنيف «:name» نهائياً.', ['name' => $category->display_name])" />
                                 </div>
                             </td>
                         </tr>

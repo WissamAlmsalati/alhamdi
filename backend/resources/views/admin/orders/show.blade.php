@@ -7,7 +7,7 @@
 @php
     $digits = preg_replace('/\D+/', '', (string) $order->phone);
     $waNumber = str_starts_with($digits, '0') ? '218' . substr($digits, 1) : $digits;
-    $productName = $order->product?->name ?? __('منتج');
+    $productName = $order->product?->display_name ?? __('منتج');
     $waText = rawurlencode(__('مرحباً :name، بخصوص استفسارك عن :product في ميكس:', ['name' => $order->name, 'product' => $productName]));
     $mailSubject = rawurlencode(__('ردّاً على استفسارك عن :product', ['product' => $productName]));
 @endphp
@@ -32,8 +32,8 @@
                         @if ($order->product?->image)<img src="{{ '/storage/' . $order->product->image }}" alt="">@else<x-admin.icon name="box" />@endif
                     </div>
                     <div>
-                        <b>{{ $order->product?->name ?? __('منتج محذوف') }}</b>
-                        <span class="muted">{{ $order->product?->category?->name }}</span>
+                        <b>{{ $order->product?->display_name ?? __('منتج محذوف') }}</b>
+                        <span class="muted">{{ $order->product?->category?->display_name }}</span>
                     </div>
                     @if ($order->product)
                         <a href="{{ route('admin.products.edit', $order->product) }}" class="btn btn-ghost btn-sm" style="margin-inline-start:auto">{{ __('فتح المنتج') }}</a>

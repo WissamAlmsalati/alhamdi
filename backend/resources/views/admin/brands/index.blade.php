@@ -23,7 +23,7 @@
                 <thead>
                     <tr>
                         <th>{{ __('بلد المنشأ') }}</th>
-                        <th>{{ __('الاسم بالإنجليزي') }}</th>
+                        <th>{{ app()->getLocale() === 'en' ? __('الاسم بالعربي') : __('الاسم بالإنجليزي') }}</th>
                         <th>{{ __('المنتجات') }}</th>
                         <th>{{ __('الظهور') }}</th>
                         <th class="t-end"><span class="sr-only">{{ __('إجراءات') }}</span></th>
@@ -38,12 +38,12 @@
                                         @if ($brand->logo)<img src="{{ '/storage/' . $brand->logo }}" alt="">@else<x-admin.icon name="globe" />@endif
                                     </div>
                                     <div>
-                                        <a href="{{ route('admin.brands.edit', $brand) }}" class="title">{{ $brand->name }}</a>
-                                        @if ($brand->description)<span class="sub">{{ \Illuminate\Support\Str::limit($brand->description, 70) }}</span>@endif
+                                        <a href="{{ route('admin.brands.edit', $brand) }}" class="title">{{ $brand->display_name }}</a>
+                                        @if ($brand->display_description)<span class="sub">{{ \Illuminate\Support\Str::limit($brand->display_description, 70) }}</span>@endif
                                     </div>
                                 </div>
                             </td>
-                            <td class="muted ltr">{{ $brand->name_en ?: '—' }}</td>
+                            <td class="muted {{ app()->getLocale() === 'en' ? '' : 'ltr' }}">{{ (app()->getLocale() === 'en' ? $brand->name : $brand->name_en) ?: '—' }}</td>
                             <td class="num">
                                 @if ($brand->products_count)
                                     <a href="{{ route('admin.products.index', ['brand' => $brand->id]) }}" class="badge plain b-viewed">{{ $brand->products_count }}</a>
@@ -54,8 +54,8 @@
                             <td><x-admin.active-badge :active="$brand->is_active" /></td>
                             <td>
                                 <div class="row-actions">
-                                    <a href="{{ route('admin.brands.edit', $brand) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $brand->name]) }}"><x-admin.icon name="edit" /></a>
-                                    <x-admin.delete-button :action="route('admin.brands.destroy', $brand)" title="{{ __('حذف بلد المنشأ') }}" :message="__('سيُحذف «:name» نهائياً. المنتجات المرتبطة به تبقى بدون بلد منشأ.', ['name' => $brand->name])" />
+                                    <a href="{{ route('admin.brands.edit', $brand) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $brand->display_name]) }}"><x-admin.icon name="edit" /></a>
+                                    <x-admin.delete-button :action="route('admin.brands.destroy', $brand)" title="{{ __('حذف بلد المنشأ') }}" :message="__('سيُحذف «:name» نهائياً. المنتجات المرتبطة به تبقى بدون بلد منشأ.', ['name' => $brand->display_name])" />
                                 </div>
                             </td>
                         </tr>

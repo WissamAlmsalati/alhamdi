@@ -24,7 +24,7 @@
         <select name="category" data-autosubmit aria-label="{{ __('التصنيف') }}">
             <option value="">{{ __('كل التصنيفات') }}</option>
             @foreach ($categories as $category)
-                <option value="{{ $category->id }}" @selected($categoryId == $category->id)>{{ $category->name }}</option>
+                <option value="{{ $category->id }}" @selected($categoryId == $category->id)>{{ $category->display_name }}</option>
             @endforeach
         </select>
         <select name="status" data-autosubmit aria-label="{{ __('الظهور') }}">
@@ -71,16 +71,17 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <a href="{{ route('admin.products.edit', $product) }}" class="title">{{ $product->name }}</a>
-                                        @if ($product->name_en)<span class="sub ltr">{{ $product->name_en }}</span>@endif
+                                        <a href="{{ route('admin.products.edit', $product) }}" class="title">{{ $product->display_name }}</a>
+                                        @php $otherName = app()->getLocale() === 'en' ? $product->name : $product->name_en; @endphp
+                                        @if ($otherName)<span class="sub {{ app()->getLocale() === 'en' ? '' : 'ltr' }}">{{ $otherName }}</span>@endif
                                     </div>
                                 </div>
                             </td>
-                            <td>{{ $product->category->name ?? '—' }}</td>
-                            <td>{{ $product->brand->name ?? '—' }}</td>
+                            <td>{{ $product->category->display_name ?? '—' }}</td>
+                            <td>{{ $product->brand->display_name ?? '—' }}</td>
                             <td class="num">
                                 @if ($product->orders_count)
-                                    <a href="{{ route('admin.orders.index', ['q' => $product->name]) }}" class="badge plain b-viewed">{{ $product->orders_count }}</a>
+                                    <a href="{{ route('admin.orders.index', ['q' => $product->display_name]) }}" class="badge plain b-viewed">{{ $product->orders_count }}</a>
                                 @else
                                     <span class="muted">0</span>
                                 @endif
@@ -88,8 +89,8 @@
                             <td><x-admin.active-badge :active="$product->is_active" /></td>
                             <td>
                                 <div class="row-actions">
-                                    <a href="{{ route('admin.products.edit', $product) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $product->name]) }}"><x-admin.icon name="edit" /></a>
-                                    <x-admin.delete-button :action="route('admin.products.destroy', $product)" title="{{ __('حذف المنتج') }}" :message="__('سيُحذف «:name» وصورته والكتالوج واستفساراته نهائياً.', ['name' => $product->name])" />
+                                    <a href="{{ route('admin.products.edit', $product) }}" class="icon-btn" title="{{ __('تعديل') }}" aria-label="{{ __('تعديل :name', ['name' => $product->display_name]) }}"><x-admin.icon name="edit" /></a>
+                                    <x-admin.delete-button :action="route('admin.products.destroy', $product)" title="{{ __('حذف المنتج') }}" :message="__('سيُحذف «:name» وصورته والكتالوج واستفساراته نهائياً.', ['name' => $product->display_name])" />
                                 </div>
                             </td>
                         </tr>

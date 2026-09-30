@@ -54,7 +54,7 @@
         <x-admin.icon name="alert" />
         <span>
             {{ __(':count من الاعتمادات منتهية أو تنتهي خلال :days يوماً:', ['count' => $expiringCertificates->count(), 'days' => \App\Models\Certificate::EXPIRY_WARNING_DAYS]) }}
-            {{ $expiringCertificates->pluck('title')->join(__('، ')) }}.
+            {{ $expiringCertificates->pluck('display_title')->join(__('، ')) }}.
             <a href="{{ route('admin.certificates.index') }}" style="text-decoration:underline">{{ __('راجع الاعتمادات') }}</a>
         </span>
     </div>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="grow">
                     <b>{{ $order->name }}</b>
-                    <small>{{ $order->product?->name ?? __('منتج محذوف') }}</small>
+                    <small>{{ $order->product?->display_name ?? __('منتج محذوف') }}</small>
                 </div>
                 <x-admin.inquiry-status :status="$order->status" />
                 <time datetime="{{ $order->created_at->toIso8601String() }}">{{ $order->created_at->diffForHumans() }}</time>
@@ -116,7 +116,7 @@
             <div class="thumb">
                 @if ($product->image)<img src="{{ '/storage/' . $product->image }}" alt="">@else<x-admin.icon name="box" />@endif
             </div>
-            <div class="grow"><b>{{ $product->name }}</b><small>{{ $product->category?->name }}</small></div>
+            <div class="grow"><b>{{ $product->display_name }}</b><small>{{ $product->category?->display_name }}</small></div>
             <span class="badge plain b-viewed num">{{ __(':count استفسار', ['count' => $product->orders_count]) }}</span>
         </a>
     @endforeach

@@ -42,7 +42,7 @@
                     <select class="select" id="category_id" name="category_id" required>
                         <option value="">{{ __('اختر التصنيف') }}</option>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>{{ $category->name }}</option>
+                            <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>{{ $category->display_name }}</option>
                         @endforeach
                     </select>
                     @error('category_id')<span class="error">{{ $message }}</span>@enderror
@@ -55,7 +55,7 @@
                     <select class="select" id="brand_id" name="brand_id">
                         <option value="">{{ __('بدون') }}</option>
                         @foreach ($brands as $brand)
-                            <option value="{{ $brand->id }}" @selected(old('brand_id', $product->brand_id) == $brand->id)>{{ $brand->name }}</option>
+                            <option value="{{ $brand->id }}" @selected(old('brand_id', $product->brand_id) == $brand->id)>{{ $brand->display_name }}</option>
                         @endforeach
                     </select>
                     @error('brand_id')<span class="error">{{ $message }}</span>@enderror

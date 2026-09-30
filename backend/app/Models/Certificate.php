@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasLocalizedFields;
 use Illuminate\Database\Eloquent\Model;
 
 class Certificate extends Model
 {
+    use HasLocalizedFields;
+
     /** Days before expiry when a certificate is flagged as "expiring soon". */
     public const EXPIRY_WARNING_DAYS = 60;
 

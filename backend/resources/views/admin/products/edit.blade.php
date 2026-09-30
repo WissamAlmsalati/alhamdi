@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title', __('تعديل منتج'))
-@section('breadcrumb')<a href="{{ route('admin.products.index') }}">{{ __('المنتجات') }}</a><span aria-hidden="true">/</span><b>{{ $product->name }}</b>@endsection
+@section('breadcrumb')<a href="{{ route('admin.products.index') }}">{{ __('المنتجات') }}</a><span aria-hidden="true">/</span><b>{{ $product->display_name }}</b>@endsection
 
 @section('content')
 <div class="page-head">
-    <div><h1>{{ $product->name }}</h1><p>{{ __('آخر تعديل :time', ['time' => $product->updated_at?->diffForHumans()]) }}</p></div>
+    <div><h1>{{ $product->display_name }}</h1><p>{{ __('آخر تعديل :time', ['time' => $product->updated_at?->diffForHumans()]) }}</p></div>
     <div class="actions">
         @if ($product->orders()->exists())
-            <a href="{{ route('admin.orders.index', ['q' => $product->name]) }}" class="btn btn-ghost"><x-admin.icon name="inbox" />{{ __('استفسارات هذا المنتج') }}</a>
+            <a href="{{ route('admin.orders.index', ['q' => $product->display_name]) }}" class="btn btn-ghost"><x-admin.icon name="inbox" />{{ __('استفسارات هذا المنتج') }}</a>
         @endif
     </div>
 </div>
@@ -24,6 +24,6 @@
 </form>
 
 <div style="margin-top:28px">
-    <x-admin.delete-button :action="route('admin.products.destroy', $product)" label="{{ __('حذف المنتج') }}" title="{{ __('حذف المنتج') }}" :message="__('سيُحذف «:name» وصورته والكتالوج واستفساراته نهائياً.', ['name' => $product->name])" />
+    <x-admin.delete-button :action="route('admin.products.destroy', $product)" label="{{ __('حذف المنتج') }}" title="{{ __('حذف المنتج') }}" :message="__('سيُحذف «:name» وصورته والكتالوج واستفساراته نهائياً.', ['name' => $product->display_name])" />
 </div>
 @endsection
