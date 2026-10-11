@@ -1,7 +1,7 @@
 services:
   db:
     image: mysql:8.0
-    container_name: wahat-db
+    container_name: alhamdi-db
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: wahat_alteeb
@@ -13,7 +13,7 @@ services:
     volumes:
       - wahat-mysql-data:/var/lib/mysql
     networks:
-      - wahat-network
+      - alhamdi-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -24,11 +24,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: wahat-backend
+    container_name: alhamdi-backend
     # Exposed only on localhost so host nginx can proxy the admin subdomain
-    # (override the host port with WAHAT_BACKEND_PORT if 8000 is taken locally)
+    # (override the host port with ALHAMDI_BACKEND_PORT if 8000 is taken locally)
     ports:
-      - "${WAHAT_BACKEND_PORT:-127.0.0.1:8000}:80"
+      - "${ALHAMDI_BACKEND_PORT:-127.0.0.1:8000}:80"
     volumes:
       - ./backend/storage/app/public:/var/www/html/storage/app/public
     environment:
@@ -36,7 +36,7 @@ services:
       - APP_DEBUG=true
       - APP_URL=https://wahatalteb.net
       - DB_CONNECTION=mysql
-      - DB_HOST=wahat-db
+      - DB_HOST=alhamdi-db
       - DB_PORT=3306
       - DB_DATABASE=wahat_alteeb
       - DB_USERNAME=wahat
@@ -45,7 +45,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      - wahat-network
+      - alhamdi-network
 
   frontend:
     build:
@@ -53,16 +53,16 @@ services:
       dockerfile: Dockerfile
       args:
         - VITE_API_URL=/api
-    container_name: wahat-frontend
+    container_name: alhamdi-frontend
     ports:
       - "127.0.0.1:3000:80"
     depends_on:
       - backend
     networks:
-      - wahat-network
+      - alhamdi-network
 
 networks:
-  wahat-network:
+  alhamdi-network:
     driver: bridge
 
 volumes:
