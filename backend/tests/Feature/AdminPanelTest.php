@@ -155,9 +155,8 @@ class AdminPanelTest extends TestCase
     public function test_admin_can_switch_to_english_left_to_right(): void
     {
         $this->actingAs($this->admin)
-            ->from(route('admin.products.index'))
-            ->get(route('locale.switch', 'en'))
-            ->assertRedirect(route('admin.products.index'));
+            ->get(route('admin.products.index', ['lang' => 'en', 'page' => 2]))
+            ->assertRedirect('/admin/products?page=2');
 
         $this->actingAs($this->admin)->get(route('admin.dashboard'))
             ->assertOk()
@@ -171,7 +170,16 @@ class AdminPanelTest extends TestCase
 
     public function test_unsupported_locale_is_rejected(): void
     {
-        $this->get('/locale/fr')->assertNotFound();
+        $this->get(route('login', ['lang' => 'fr']))->assertOk()->assertSee('dir="rtl"', false);
+    }
+
+    public function test_guest_can_switch_language_on_login_page(): void
+    {
+        $this->get(route('login'))->assertSee('href="?lang=en"', false);
+
+        $this->get(route('login', ['lang' => 'en']))->assertRedirect('/login');
+
+        $this->get(route('login'))->assertOk()->assertSee('dir="ltr"', false)->assertSee('href="?lang=ar"', false);
     }
 
     public function test_validation_errors_are_arabic_by_default(): void
@@ -288,7 +296,7 @@ class AdminPanelTest extends TestCase
         $this->actingAs($this->admin)->get(route('admin.products.index'))
             ->assertSee('class="title">فستق حلبي', false);
 
-        $this->actingAs($this->admin)->get(route('locale.switch', 'en'));
+        $this->actingAs($this->admin)->get(route('admin.products.index', ['lang' => 'en']));
 
         $this->actingAs($this->admin)->get(route('admin.products.index'))
             ->assertSee('class="title">Aleppo pistachio', false)->assertSee('Nuts');

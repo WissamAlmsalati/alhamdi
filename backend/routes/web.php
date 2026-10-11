@@ -19,13 +19,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::get('/locale/{locale}', function (string $locale) {
-    abort_unless(in_array($locale, \App\Http\Middleware\SetLocale::SUPPORTED, true), 404);
-    session(['locale' => $locale]);
-
-    return redirect()->back();
-})->name('locale.switch');
-
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 Route::redirect('/admin', '/admin/dashboard');

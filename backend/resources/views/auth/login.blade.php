@@ -24,7 +24,7 @@
 
     <section class="panel">
         @php $otherLocale = app()->getLocale() === 'ar' ? 'en' : 'ar'; @endphp
-        <a href="{{ route('locale.switch', $otherLocale) }}" class="lang-switch" hreflang="{{ $otherLocale }}" lang="{{ $otherLocale }}">
+        <a href="?{{ http_build_query(array_merge(request()->query(), ['lang' => $otherLocale])) }}" class="lang-switch" hreflang="{{ $otherLocale }}" lang="{{ $otherLocale }}">
             <x-admin.icon name="globe" style="width:15px;height:15px" />{{ $otherLocale === 'en' ? 'English' : 'العربية' }}
         </a>
         <form method="POST" action="{{ route('login') }}">
