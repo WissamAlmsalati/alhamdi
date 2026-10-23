@@ -6,7 +6,7 @@ import PageHeader from '../components/PageHeader.jsx'
 import CtaBox from '../components/CtaBox.jsx'
 import Icon from '../components/Icon.jsx'
 import { CountUp, useReveal } from '../components/Effects.jsx'
-import { BagsIllustration } from './Home.jsx'
+import { AboutImage } from './Home.jsx'
 
 function formatDate(iso, language) {
   if (!iso) return ''
@@ -130,7 +130,7 @@ export default function AboutPage() {
           <p>{t('storyP3')}</p>
           <div className="sig"><img src="/assets/logo-128.png" alt="" width="52" height="52" /><div><b>{t('signName')}</b><small>{t('signRole')}</small></div></div>
         </div>
-        <div className="frame"><BagsIllustration /></div>
+        <div className="frame"><AboutImage /></div>
       </section>
 
       <section className="stats">

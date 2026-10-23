@@ -5,8 +5,7 @@ export const SITE = {
   whatsapp: '0912110640',
   whatsappDigits: '218912110640',
   phone: '0927568000',
-  // PLACEHOLDER: no email in the company profile yet — replace before launch.
-  email: 'info@mix.ly',
+  email: 'info@alhami.ly',
   licenseNumber: '36888',
   mapsUrl: 'https://maps.google.com/?q=Libya',
   // Optional hero video. Put the file in frontend/public/assets/ and keep these paths.

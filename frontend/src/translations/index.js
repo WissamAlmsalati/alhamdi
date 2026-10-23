@@ -3,6 +3,7 @@
 const translations = {
   "ar": {
     "brand": "ميكس",
+    "followUs": "تابعونا",
     "productImages": "صور المنتج",
     "imageN": "صورة {{n}}",
     "brandTagline": "مجموعة الحامي",
@@ -258,6 +259,7 @@ const translations = {
   },
   "en": {
     "brand": "MiX",
+    "followUs": "Follow us",
     "productImages": "Product images",
     "imageN": "Image {{n}}",
     "brandTagline": "Al-Hami Group",

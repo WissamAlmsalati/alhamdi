@@ -436,3 +436,19 @@ table.table { width: 100%; border-collapse: collapse; min-width: 720px; }
 
 /* The side column can be taller than the screen (image, gallery, catalog): let it scroll with the page. */
 .form-layout .side { position: static; }
+
+/* Social links */
+.social-badge { width: 40px; height: 40px; border-radius: 50%; background: var(--black); color: var(--orange); display: grid; place-items: center; flex: none; }
+.social-badge svg { width: 19px; height: 19px; }
+.list-row .grow small a:hover { color: var(--orange); }
+/* Site images */
+.site-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.site-slot { display: grid; gap: 8px; align-content: start; }
+.site-slot .slot-title { font-size: 14px; }
+.site-slot .upload .preview { aspect-ratio: 1; }
+.site-slot.wide { max-width: 420px; }
+.site-slot.wide .upload .preview { aspect-ratio: 4 / 3; }
+.check-line { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.check-line input { accent-color: var(--red); margin: 0; }
+@media (max-width: 900px) { .site-slots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .site-slots { grid-template-columns: 1fr; } }

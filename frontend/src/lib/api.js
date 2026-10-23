@@ -61,3 +61,19 @@ export function useApi(path, params = {}) {
   const retry = useCallback(() => setAttempt((n) => n + 1), [])
   return { ...state, retry }
 }
+
+// Site-wide content managed from the admin panel: footer social links and section images.
+// Fetched once per page load and shared by every component that asks for it.
+let siteCache = null
+export function useSite() {
+  const [site, setSite] = useState(siteCache || { social_links: [], images: {} })
+  useEffect(() => {
+    if (siteCache) return
+    let cancelled = false
+    getJson('/site')
+      .then((data) => { siteCache = data; if (!cancelled) setSite(data) })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
+  return site
+}

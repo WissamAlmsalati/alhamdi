@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
-import { useApi } from '../lib/api.js'
+import { useApi, useSite } from '../lib/api.js'
+import SocialIcon from './SocialIcon.jsx'
 import { SITE } from '../config/site.js'
 
 export default function Footer() {
   const { t, toggleLanguage } = useLanguage()
   const { data: categories } = useApi('/categories')
+  const { social_links: socials = [] } = useSite()
 
   return (
     <footer className="footer">
@@ -17,6 +19,17 @@ export default function Footer() {
               <b>{t('brand')}</b>
             </Link>
             <p style={{ fontSize: 13.5, margin: '14px 0 0', maxWidth: '34ch' }}>{t('footerAbout')}</p>
+            {socials.length > 0 && (
+              <ul className="socials" aria-label={t('followUs')}>
+                {socials.map((s) => (
+                  <li key={s.id}>
+                    <a href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label} title={s.label}>
+                      <SocialIcon platform={s.platform} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div>
             <h4>{t('links')}</h4>

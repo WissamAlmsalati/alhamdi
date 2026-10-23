@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
-import { useApi } from '../lib/api.js'
+import { assetUrl, useApi, useSite } from '../lib/api.js'
 import { SITE } from '../config/site.js'
 import { CountUp, useReveal } from '../components/Effects.jsx'
 import HeroParticles from '../components/HeroParticles.jsx'
@@ -81,9 +81,13 @@ const QUICK_TERMS = {
   espresso: { ar: 'خلطة', en: 'blend' },
 }
 
+// Quick-nav slot => admin image key (Site images page).
+const QUICK_IMAGE = { pistachio: 'quick_pistachio', almond: 'quick_almond', cashew: 'quick_cashew', hazelnut: 'quick_hazelnut', coffee: 'quick_coffee', espresso: 'quick_blend' }
+
 function QuickNav() {
   const { t, language } = useLanguage()
   const navigate = useNavigate()
+  const { images = {} } = useSite()
   const items = [
     ['pistachio', 'qnPistachio', 'qnPistachioSub'],
     ['almond', 'qnAlmond', 'qnAlmondSub'],
@@ -97,7 +101,9 @@ function QuickNav() {
       <div className="wrap row">
         {items.map(([art, title, sub]) => (
           <button key={art} type="button" className="nut" onClick={() => navigate(`/products?q=${encodeURIComponent(QUICK_TERMS[art][language])}`)}>
-            <span className="ring"><MiniArt kind={art} /></span>
+            <span className="ring">
+              {images[QUICK_IMAGE[art]] ? <img src={assetUrl(images[QUICK_IMAGE[art]])} alt="" loading="lazy" /> : <MiniArt kind={art} />}
+            </span>
             <b>{t(title)}</b>
             <small>{t(sub)}</small>
           </button>
@@ -125,12 +131,20 @@ function AboutTeaser() {
           <Link to="/about" className="btn" style={{ marginTop: 24 }}><span>{t('learnMore')}</span><span className="arrow">→</span></Link>
         </div>
         <figure className="about-vis">
-          <div className="frame"><BagsIllustration /></div>
+          <div className="frame"><AboutImage /></div>
           <div className="stamp" aria-hidden="true">{t('stampText')}</div>
         </figure>
       </div>
     </section>
   )
+}
+
+// About section image: the admin-uploaded photo, or the drawn jars when none is set.
+export function AboutImage() {
+  const { images = {} } = useSite()
+  return images.about_image
+    ? <img className="about-photo" src={assetUrl(images.about_image)} alt="" loading="lazy" />
+    : <BagsIllustration />
 }
 
 // Three brand jars (pistachio, mixed nuts, coffee) standing together.

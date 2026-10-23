@@ -9,6 +9,8 @@ use App\Models\Certificate;
 use App\Models\Contact;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\SiteSetting;
+use App\Models\SocialLink;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -73,6 +75,18 @@ class SiteController extends Controller
             ]);
 
         return response()->json($items);
+    }
+
+    /** Footer social links and admin-managed site images (null = use the built-in drawing). */
+    public function site(): JsonResponse
+    {
+        $links = SocialLink::where('is_active', true)->orderBy('sort_order')->orderBy('id')
+            ->get(['id', 'platform', 'url'])
+            ->map(fn (SocialLink $link) => ['id' => $link->id, 'platform' => $link->platform, 'label' => $link->label, 'url' => $link->url]);
+
+        $images = collect(SiteSetting::images())->map(fn ($path) => $path ? '/storage/'.$path : null);
+
+        return response()->json(['social_links' => $links, 'images' => $images]);
     }
 
     public function certificates(): JsonResponse

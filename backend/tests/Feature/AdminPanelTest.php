@@ -305,4 +305,45 @@ class AdminPanelTest extends TestCase
         $this->actingAs($this->admin)->get(route('admin.products.edit', $this->product))
             ->assertSee('value="فستق حلبي"', false)->assertSee('value="Aleppo pistachio"', false);
     }
+
+    public function test_social_links_are_added_with_detected_platform_and_deleted(): void
+    {
+        $this->actingAs($this->admin)->post(route('admin.social-links.store'), ['url' => 'instagram.com/mix.ly'])
+            ->assertRedirect(route('admin.social-links.index'));
+        $this->actingAs($this->admin)->post(route('admin.social-links.store'), ['url' => 'https://wa.me/218912110640']);
+
+        $this->getJson('/api/site')->assertOk()
+            ->assertJsonFragment(['platform' => 'instagram', 'url' => 'https://instagram.com/mix.ly'])
+            ->assertJsonFragment(['platform' => 'whatsapp']);
+
+        $link = \App\Models\SocialLink::where('platform', 'instagram')->firstOrFail();
+        $this->actingAs($this->admin)->get(route('admin.social-links.index'))->assertOk()->assertSee('Instagram');
+        $this->actingAs($this->admin)->delete(route('admin.social-links.destroy', $link))->assertRedirect();
+
+        $this->getJson('/api/site')->assertJsonMissing(['platform' => 'instagram'])->assertJsonCount(1, 'social_links');
+        $this->actingAs($this->admin)->post(route('admin.social-links.store'), ['url' => 'not a link'])->assertSessionHasErrors('url');
+    }
+
+    public function test_site_images_can_be_uploaded_and_removed(): void
+    {
+        Storage::fake('public');
+
+        $this->getJson('/api/site')->assertOk()->assertJsonPath('images.about_image', null);
+        $this->actingAs($this->admin)->get(route('admin.site-content.edit'))->assertOk();
+
+        $this->actingAs($this->admin)->put(route('admin.site-content.update'), [
+            'about_image' => UploadedFile::fake()->image('about.jpg', 1200, 900),
+            'quick_pistachio' => UploadedFile::fake()->image('p.png', 600, 600),
+        ])->assertRedirect(route('admin.site-content.edit'));
+
+        $path = \App\Models\SiteSetting::get('about_image');
+        Storage::disk('public')->assertExists($path);
+        $this->getJson('/api/site')->assertJsonPath('images.about_image', '/storage/'.$path)
+            ->assertJsonPath('images.quick_almond', null);
+
+        $this->actingAs($this->admin)->put(route('admin.site-content.update'), ['remove' => ['about_image']]);
+        $this->assertNull(\App\Models\SiteSetting::get('about_image'));
+        Storage::disk('public')->assertMissing($path);
+        $this->assertNotNull(\App\Models\SiteSetting::get('quick_pistachio'));
+    }
 }

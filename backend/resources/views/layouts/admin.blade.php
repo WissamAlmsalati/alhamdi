@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=10">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=11">
 </head>
 <body>
 @php
@@ -30,6 +30,8 @@
         ]],
         ['label' => __('الشركة'), 'items' => [
             ['route' => 'admin.certificates.index', 'match' => 'admin.certificates.*', 'icon' => 'award', 'text' => __('الاعتمادات والتراخيص')],
+            ['route' => 'admin.site-content.edit', 'match' => 'admin.site-content.*', 'icon' => 'image', 'text' => __('صور الواجهة')],
+            ['route' => 'admin.social-links.index', 'match' => 'admin.social-links.*', 'icon' => 'link', 'text' => __('روابط التواصل الاجتماعي')],
         ]],
     ];
 @endphp

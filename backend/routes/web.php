@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\SiteContentController;
+use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +34,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('contacts', ContactController::class)->only(['index', 'show', 'update', 'destroy'])->names('admin.contacts');
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'update', 'destroy'])->names('admin.orders');
     Route::resource('certificates', CertificateController::class)->except(['show'])->names('admin.certificates');
+    Route::resource('social-links', SocialLinkController::class)->only(['index', 'store', 'destroy'])->names('admin.social-links');
+    Route::get('/site-content', [SiteContentController::class, 'edit'])->name('admin.site-content.edit');
+    Route::put('/site-content', [SiteContentController::class, 'update'])->name('admin.site-content.update');
 });
