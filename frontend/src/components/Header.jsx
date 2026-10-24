@@ -44,10 +44,11 @@ export default function Header() {
   const homeLink = useHomeSection(onHome)
 
   const links = [
+    // Same order as the home-page sections, so the active link moves step by step while scrolling.
     { key: 'home', to: '/', label: t('home'), end: true },
+    { key: 'about', to: '/about', label: t('about') },
     { key: 'products', to: '/products', label: t('products') },
     { key: 'categories', to: '/#categories', label: t('categories'), hash: true },
-    { key: 'about', to: '/about', label: t('about') },
     { key: 'contact', to: '/contact', label: t('contact') },
   ]
 
