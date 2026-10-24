@@ -27,8 +27,7 @@ body {
 }
 /* hidden turns body into a scroll container on iOS Safari and stops the sticky header; clip doesn't */
 @supports (overflow: clip) { body { overflow-x: clip; } }
-#root { min-height: 100svh; display: flex; flex-direction: column; padding-top: calc(var(--header-h) + 5px); }
-html { scroll-padding-top: calc(var(--header-h) + 5px); }
+#root { min-height: 100svh; display: flex; flex-direction: column; }
 main { flex: 1; }
 h1, h2, h3, h4 { font-family: var(--font-d); font-weight: 800; margin: 0; line-height: 1.3; text-wrap: balance; }
 a { color: inherit; text-decoration: none; }
@@ -88,8 +87,8 @@ button { font: inherit; }
 .grain { position: fixed; inset: 0; pointer-events: none; z-index: 80; opacity: .05; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
 
 /* ---------- Header ---------- */
-/* fixed rather than sticky: sticky silently fails when any ancestor clips overflow, which differs by browser */
-.header { position: fixed; top: 0; inset-inline: 0; z-index: 40; background: var(--black); color: #fff; }
+/* Scrolls away with the page; intentionally not sticky */
+.header { position: relative; z-index: 40; background: var(--black); color: #fff; }
 .header nav { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .logo { display: flex; align-items: center; gap: 10px; }
 .logo i { width: 34px; height: 34px; background: var(--orange); display: grid; place-items: center; font-style: normal; font-family: var(--font-d); font-weight: 900; color: #111; font-size: 18px; }
@@ -104,7 +103,7 @@ button { font: inherit; }
 .nav-cta .btn { padding: 9px 16px; font-size: 13px; }
 .menu-btn { display: none; width: 42px; height: 42px; border: 1.5px solid rgba(255, 255, 255, .4); background: none; color: #fff; cursor: pointer; place-items: center; }
 .menu-btn svg { width: 20px; height: 20px; }
-.mobile-menu { background: var(--black); border-top: 1px solid #2a2a2a; padding: 12px 24px 20px; display: grid; gap: 2px; max-height: calc(100svh - var(--header-h) - 5px); overflow-y: auto; }
+.mobile-menu { background: var(--black); border-top: 1px solid #2a2a2a; padding: 12px 24px 20px; display: grid; gap: 2px; }
 .mobile-menu a { padding: 12px 0; font-weight: 700; border-bottom: 1px solid #222; }
 .mobile-menu a.active { color: var(--orange); }
 @media (max-width: 900px) {
@@ -266,7 +265,7 @@ button { font: inherit; }
 
 /* ---------- Products page ---------- */
 .shop { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 36px; align-items: start; padding-block: 48px 96px; }
-.side { position: sticky; top: calc(var(--header-h) + 24px); display: grid; gap: 26px; }
+.side { position: sticky; top: 24px; display: grid; gap: 26px; }
 .fgroup h4 { font-size: 14px; font-weight: 800; margin-bottom: 10px; }
 .chk { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; cursor: pointer; }
 .chk input { appearance: none; width: 18px; height: 18px; border: 1.5px solid var(--line-strong); display: grid; place-items: center; margin: 0; cursor: pointer; flex: none; }
@@ -310,7 +309,7 @@ button { font: inherit; }
 
 /* ---------- Product details ---------- */
 .pd { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 56px; padding-block: 48px 80px; align-items: start; }
-.gal { position: sticky; top: calc(var(--header-h) + 24px); }
+.gal { position: sticky; top: 24px; }
 .gal .main { aspect-ratio: 1; background: var(--grey); display: grid; place-items: center; position: relative; max-width: 100%; }
 .gal .main img { width: 100%; height: 100%; object-fit: contain; padding: 10%; }
 .gal .main svg { width: auto; height: 82%; max-width: 90%; }
