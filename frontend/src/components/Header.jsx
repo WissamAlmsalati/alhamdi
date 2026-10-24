@@ -3,6 +3,36 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import Icon from './Icon.jsx'
 
+// Home-page sections (in page order) and the nav link each one lights up while it's on screen.
+const SECTION_LINK = { hero: 'home', about: 'about', products: 'products', categories: 'categories', cta: 'contact' }
+
+function useHomeSection(enabled) {
+  const [section, setSection] = useState('hero')
+
+  useEffect(() => {
+    if (!enabled) return
+    const onScroll = () => {
+      const line = window.innerHeight * 0.35
+      let current = 'hero'
+      for (const id of Object.keys(SECTION_LINK)) {
+        const el = document.getElementById(id)
+        if (el && el.getBoundingClientRect().top <= line) current = id
+      }
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
+      setSection(atBottom ? 'cta' : current)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [enabled])
+
+  return SECTION_LINK[section]
+}
+
 export default function Header() {
   const { t, toggleLanguage, language } = useLanguage()
   const [open, setOpen] = useState(false)
@@ -10,16 +40,23 @@ export default function Header() {
 
   useEffect(() => setOpen(false), [pathname])
 
+  const onHome = pathname === '/'
+  const homeLink = useHomeSection(onHome)
+
   const links = [
-    { to: '/', label: t('home'), end: true },
-    { to: '/products', label: t('products') },
-    { to: '/#categories', label: t('categories'), hash: true },
-    { to: '/about', label: t('about') },
-    { to: '/contact', label: t('contact') },
+    { key: 'home', to: '/', label: t('home'), end: true },
+    { key: 'products', to: '/products', label: t('products') },
+    { key: 'categories', to: '/#categories', label: t('categories'), hash: true },
+    { key: 'about', to: '/about', label: t('about') },
+    { key: 'contact', to: '/contact', label: t('contact') },
   ]
 
   const renderLink = (l) =>
-    l.hash ? (
+    onHome ? (
+      <Link key={l.to} to={l.to} className={homeLink === l.key ? 'active' : ''} aria-current={homeLink === l.key ? 'true' : undefined}>
+        {l.label}
+      </Link>
+    ) : l.hash ? (
       <Link key={l.to} to={l.to}>{l.label}</Link>
     ) : (
       <NavLink key={l.to} to={l.to} end={l.end} className={({ isActive }) => (isActive ? 'active' : '')}>
