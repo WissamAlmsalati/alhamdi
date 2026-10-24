@@ -1,0 +1,20 @@
+# Shared hosting (Apache): serve existing files directly, send every other route to the React app,
+# so refreshing /products or /about doesn't return 404.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Cache hashed build files for a year; always revalidate index.html.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|woff2?|otf|png|jpg|jpeg|webp|svg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "index\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
