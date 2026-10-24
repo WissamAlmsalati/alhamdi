@@ -19,17 +19,6 @@ export default function Footer() {
               <b>{t('brand')}</b>
             </Link>
             <p style={{ fontSize: 13.5, margin: '14px 0 0', maxWidth: '34ch' }}>{t('footerAbout')}</p>
-            {socials.length > 0 && (
-              <ul className="socials" aria-label={t('followUs')}>
-                {socials.map((s) => (
-                  <li key={s.id}>
-                    <a href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label} title={s.label}>
-                      <SocialIcon platform={s.platform} />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
           <div>
             <h4>{t('links')}</h4>
@@ -54,6 +43,17 @@ export default function Footer() {
               {SITE.phones.map((p) => <li key={p} className="ltr" style={{ textAlign: 'start' }}><a href={`tel:${p}`}>{p}</a></li>)}
               <li>{t('workingHoursShort')}</li>
             </ul>
+            {socials.length > 0 && (
+              <ul className="socials" aria-label={t('followUs')}>
+                {socials.map((s) => (
+                  <li key={s.id}>
+                    <a href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label} title={s.label}>
+                      <SocialIcon platform={s.platform} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
         <div className="big" aria-hidden="true">{t('brand')}</div>

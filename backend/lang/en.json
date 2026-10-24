@@ -301,10 +301,10 @@
     "إزالة الصورة والرجوع للرسمة": "Remove image and use the drawing",
     "تم حفظ صور الواجهة": "Site images saved",
     "الملف يجب أن يكون صورة.": "The file must be an image.",
-    "الفستق": "Pistachio",
-    "اللوز": "Almonds",
-    "الكاجو": "Cashew",
-    "البندق": "Hazelnut",
-    "بن الحامي": "Al-Hami coffee",
-    "خلطات ميكس": "MiX blends"
+    "الصورة الأولى": "Image 1",
+    "الصورة الثانية": "Image 2",
+    "الصورة الثالثة": "Image 3",
+    "الصورة الرابعة": "Image 4",
+    "الصورة الخامسة": "Image 5",
+    "الصورة السادسة": "Image 6"
 }

@@ -9,12 +9,13 @@ class SiteSetting extends Model
     /** Site images editable from the admin panel. When empty, the site shows its built-in drawings. */
     public const IMAGES = [
         'about_image' => 'الصورة الكبيرة في قسم «من نحن»',
-        'quick_pistachio' => 'الفستق',
-        'quick_almond' => 'اللوز',
-        'quick_cashew' => 'الكاجو',
-        'quick_hazelnut' => 'البندق',
-        'quick_coffee' => 'بن الحامي',
-        'quick_blend' => 'خلطات ميكس',
+        // Round home-page sections, in the order they appear on the site.
+        'quick_pistachio' => 'الصورة الأولى',
+        'quick_almond' => 'الصورة الثانية',
+        'quick_cashew' => 'الصورة الثالثة',
+        'quick_hazelnut' => 'الصورة الرابعة',
+        'quick_coffee' => 'الصورة الخامسة',
+        'quick_blend' => 'الصورة السادسة',
     ];
 
     protected $fillable = ['key', 'value'];

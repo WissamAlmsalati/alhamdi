@@ -679,11 +679,11 @@ h1, h2, h3, h4 { font-weight: 400; letter-spacing: 0; }
 .gal .thumbs button.on { border-color: var(--black); box-shadow: 0 0 0 2px var(--orange); }
 @media (max-width: 520px) { .gal .thumbs { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
-/* Footer social links (managed from the admin panel) */
+/* Footer social links (managed from the admin panel): icon buttons under the contact column */
 .socials { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.socials a { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #221C16; color: var(--cream); box-shadow: inset 0 0 0 1.5px #3A3128; transition: background .18s, color .18s, transform .18s; }
-.socials a:hover { background: var(--orange); color: #111; transform: translateY(-2px); }
-.socials svg { width: 19px; height: 19px; }
+.socials a { width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; background: var(--orange); color: #111; transition: background .18s, color .18s, transform .18s; }
+.socials a:hover { background: var(--cream); color: #111; transform: translateY(-2px); }
+.socials svg { width: 20px; height: 20px; }
 /* Admin-uploaded section images */
 .ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .frame .about-photo { width: 100%; height: 100%; object-fit: cover; display: block; }
